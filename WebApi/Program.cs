@@ -1,5 +1,10 @@
+using BLL.Interfaces;
+using BLL.Services;
 using DAL.EF;
+using DAL.Interfaces;
+using DAL.Repositories;
 using Microsoft.EntityFrameworkCore;
+using WebApi.MappingProfiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,8 +15,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Регистрация AutoMapper с указанием профиля маппинга
+builder.Services.AddAutoMapper(typeof(MappingProfiles));
+
 builder.Services.AddDbContext<ApplicationContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
 var app = builder.Build();
 

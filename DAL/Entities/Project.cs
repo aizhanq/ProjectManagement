@@ -1,4 +1,6 @@
-﻿namespace DAL.Entities
+﻿using System.ComponentModel.DataAnnotations; // Добавляем пространство имен для атрибута Range
+
+namespace DAL.Entities
 {
     public class Project
     {
@@ -8,6 +10,8 @@
         public string ExecutorCompany { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+
+        [Range(1, 5, ErrorMessage = "Приоритет должен быть в диапазоне от 1 до 5")]
         public int Priority { get; set; }
 
         // Навигационное свойство для связи с сотрудниками проекта
