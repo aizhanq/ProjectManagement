@@ -56,39 +56,8 @@
 <body>
     <h1>Projects</h1>
 
-    <!-- Форма для создания проекта (скрыта по умолчанию) -->
-    <div id="createProjectForm">
-        <h2>Добавить проект</h2>
-        <form onsubmit="createProject(); return false;">
-            <label for="projectName">Название проекта:</label>
-            <input type="text" id="projectName" required>
-
-            <label for="customerCompany">Заказчик:</label>
-            <input type="text" id="customerCompany" required>
-
-            <label for="executorCompany">Исполнитель:</label>
-            <input type="text" id="executorCompany" required>
-
-            <label for="startDate">Дата начала:</label>
-            <input type="date" id="startDate" required>
-
-            <label for="endDate">Дата окончания:</label>
-            <input type="date" id="endDate" required>
-
-            <label for="priority">Приоритет (1-5):</label>
-            <input type="number" id="priority" required min="1" max="5">
-
-            <label for="manager">Менеджер:</label>
-            <select id="manager" required>
-                <!-- Опции будут добавлены динамически при загрузке страницы -->
-            </select>
-
-            <button type="submit">Создать</button>
-        </form>
-    </div>
-
     <!-- Кнопка для добавления проекта -->
-    <button onclick="openCreateProjectForm()">Добавить проект</button>
+    <a href="/createProject.html">Добавить проект</a>
 
     <!-- Таблица проектов -->
     <table>
@@ -110,50 +79,6 @@
 
     <script>
         // Ваши скрипты здесь
-
-        function openCreateProjectForm() {
-            document.getElementById("createProjectForm").style.display = "block";
-            loadManagers();
-        }
-
-        function createProject() {
-            const projectName = document.getElementById("projectName").value;
-            const customerCompany = document.getElementById("customerCompany").value;
-            const executorCompany = document.getElementById("executorCompany").value;
-            const startDate = document.getElementById("startDate").value;
-            const endDate = document.getElementById("endDate").value;
-            const priority = document.getElementById("priority").value;
-            const managerId = document.getElementById("manager").value;
-
-            const projectData = {
-                projectName,
-                customerCompany,
-                executorCompany,
-                startDate,
-                endDate,
-                priority,
-                managerId
-            };
-
-            fetch("/api/Project", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(projectData)
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                    return response.text();
-                })
-                .then(() => {
-                    updateProjectsList();
-                    document.getElementById("createProjectForm").style.display = "none";
-                })
-                .catch(error => console.error('Error:', error));
-        }
 
         function loadManagers() {
             const managerDropdown = document.getElementById("manager");
@@ -186,18 +111,18 @@
                     projects.forEach(project => {
                         const projectRow = document.createElement("tr");
                         projectRow.innerHTML = `
-                                    <td>${project.projectName}</td>
-                                    <td>${project.customerCompany}</td>
-                                    <td>${project.executorCompany}</td>
-                                    <td>${formatDate(project.startDate)}</td>
-                                    <td>${formatDate(project.endDate)}</td>
-                                    <td>${project.priority}</td>
-                                    <td>
-                                        <button onclick="viewProjectDetails(${project.projectId})">Детали</button>
-                                        <button onclick="editProject(${project.projectId})">Изменить</button>
-                                        <button onclick="deleteProject(${project.projectId})">Удалить</button>
-                                    </td>
-                                `;
+                                        <td>${project.projectName}</td>
+                                        <td>${project.customerCompany}</td>
+                                        <td>${project.executorCompany}</td>
+                                        <td>${formatDate(project.startDate)}</td>
+                                        <td>${formatDate(project.endDate)}</td>
+                                        <td>${project.priority}</td>
+                                        <td>
+                                            <button onclick="viewProjectDetails(${project.projectId})">Детали</button>
+                                            <button onclick="editProject(${project.projectId})">Изменить</button>
+                                            <button onclick="deleteProject(${project.projectId})">Удалить</button>
+                                        </td>
+                                    `;
                         projectsList.appendChild(projectRow);
                     });
                 });

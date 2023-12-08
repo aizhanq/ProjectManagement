@@ -1,0 +1,131 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Project</title>
+    <style>
+        /* Ваши стили здесь */
+        form {
+            width: 50%;
+            margin: 50px auto;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Create Project</h1>
+
+    <form onsubmit="createProject(); return false;">
+        <label for="projectName">Название проекта:</label>
+        <input type="text" id="projectName" required>
+
+        <label for="customerCompany">Заказчик:</label>
+        <input type="text" id="customerCompany" required>
+
+        <label for="executorCompany">Исполнитель:</label>
+        <input type="text" id="executorCompany" required>
+
+        <label for="startDate">Дата начала:</label>
+        <input type="date" id="startDate" required>
+
+        <label for="endDate">Дата окончания:</label>
+        <input type="date" id="endDate" required>
+
+        <label for="priority">Приоритет (1-5):</label>
+        <input type="number" id="priority" required min="1" max="5">
+
+        <label for="manager">Менеджер:</label>
+        <select id="manager" required>
+            <!-- Опции будут добавлены динамически при загрузке страницы -->
+        </select>
+
+        <button type="submit">Создать</button>
+    </form>
+
+    <script>
+        // Ваши скрипты здесь
+
+        function createProject() {
+            const projectName = document.getElementById("projectName").value;
+            const customerCompany = document.getElementById("customerCompany").value;
+            const executorCompany = document.getElementById("executorCompany").value;
+            const startDate = document.getElementById("startDate").value;
+            const endDate = document.getElementById("endDate").value;
+            const priority = document.getElementById("priority").value;
+            const managerId = document.getElementById("manager").value;
+
+            const projectData = {
+                projectName,
+                customerCompany,
+                executorCompany,
+                startDate,
+                endDate,
+                priority,
+                managerId
+            };
+
+            fetch("/api/Project", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(projectData)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(() => {
+                    // Перенаправление на главную страницу после создания проекта
+                    window.location.href = "/";
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function loadManagers() {
+            const managerDropdown = document.getElementById("manager");
+
+            fetch("/api/Employee")
+                .then(response => response.json())
+                .then(employees => {
+                    employees.forEach(employee => {
+                        const option = document.createElement("option");
+                        option.value = employee.employeeId;
+                        option.textContent = `${employee.firstName} ${employee.lastName}`;
+                        managerDropdown.appendChild(option);
+                    });
+                });
+        }
+
+        window.onload = loadManagers;
+    </script>
+</body>
+</html>
