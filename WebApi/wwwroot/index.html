@@ -202,30 +202,44 @@
         }
 
         function viewEmployeeDetails(employeeId) {
-            // Реализуйте переход к деталям сотрудника, аналогично странице проекта
-            // window.location.href = `/detailsEmployee.html?id=${employeeId}`;
+            window.location.href = `/detailsEmployee.html?id=${employeeId}`;
         }
 
         function editEmployee(employeeId) {
-            // Реализуйте переход к редактированию сотрудника, аналогично странице редактирования проекта
-            // window.location.href = `/editEmployee.html?id=${employeeId}`;
+            window.location.href = `/editEmployee.html?id=${employeeId}`;
         }
 
         function deleteEmployee(employeeId) {
-            fetch(`/api/Employee/${employeeId}`, {
-                method: 'DELETE'
-            })
+            // Проверяем, является ли сотрудник менеджером проекта
+            fetch(`/api/Project/manager/${employeeId}`)
                 .then(response => {
                     if (!response.ok) {
+                        // Если сотрудник менеджер проекта, выводим сообщение и прерываем удаление
+                        alert("Нельзя удалить сотрудника, так как он является менеджером проекта.");
                         throw new Error(`HTTP error! Status: ${response.status}`);
                     }
                     return response.text();
                 })
                 .then(() => {
-                    updateEmployeesList();
+                    // Если сотрудник не является менеджером проекта, продолжаем удаление
+                    fetch(`/api/Employee/${employeeId}`, {
+                        method: 'DELETE'
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! Status: ${response.status}`);
+                            }
+                            return response.text();
+                        })
+                        .then(() => {
+                            updateEmployeesList();
+                        })
+                        .catch(error => console.error('Error:', error));
                 })
                 .catch(error => console.error('Error:', error));
         }
+
+
 
         // Функция сортировки таблицы по столбцу
         function sortTable(columnIndex) {
