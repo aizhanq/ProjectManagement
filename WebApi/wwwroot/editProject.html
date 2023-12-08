@@ -1,0 +1,152 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Project</title>
+    <style>
+        /* Ваши стили здесь */
+        form {
+            width: 50%;
+            margin: 50px auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input, select, button {
+            margin-bottom: 10px;
+            width: 100%;
+            padding: 8px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Edit Project</h1>
+
+    <form id="editProjectForm">
+        <label for="projectName">Название проекта:</label>
+        <input type="text" id="projectName" required>
+
+        <label for="customerCompany">Заказчик:</label>
+        <input type="text" id="customerCompany" required>
+
+        <label for="executorCompany">Исполнитель:</label>
+        <input type="text" id="executorCompany" required>
+
+        <label for="startDate">Дата начала:</label>
+        <input type="date" id="startDate" required>
+
+        <label for="endDate">Дата окончания:</label>
+        <input type="date" id="endDate" required>
+
+        <label for="priority">Приоритет (1-5):</label>
+        <input type="number" id="priority" required min="1" max="5">
+
+        <label for="manager">Менеджер:</label>
+        <select id="manager" required>
+            <!-- Опции будут добавлены динамически при загрузке страницы -->
+        </select>
+
+        <button type="button" onclick="saveChanges()">Сохранить изменения</button>
+    </form>
+
+    <script>
+        // Ваши скрипты здесь
+
+        function loadManagers() {
+            const managerDropdown = document.getElementById("manager");
+
+            fetch("/api/Employee")
+                .then(response => response.json())
+                .then(employees => {
+                    employees.forEach(employee => {
+                        const option = document.createElement("option");
+                        option.value = employee.employeeId;
+                        option.textContent = `${employee.firstName} ${employee.lastName}`;
+                        managerDropdown.appendChild(option);
+                    });
+                });
+        }
+
+        function formatDate(dateString) {
+            const options = { day: 'numeric', month: 'numeric', year: 'numeric' };
+            const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
+            return formattedDate;
+        }
+
+        function getProjectDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const projectId = urlParams.get('id');
+
+            fetch(`/api/Project/${projectId}`)
+                .then(response => response.json())
+                .then(project => {
+                    document.getElementById("projectName").value = project.projectName;
+                    document.getElementById("customerCompany").value = project.customerCompany;
+                    document.getElementById("executorCompany").value = project.executorCompany;
+                    document.getElementById("startDate").value = project.startDate;
+                    document.getElementById("endDate").value = project.endDate;
+                    document.getElementById("priority").value = project.priority;
+                    document.getElementById("manager").value = project.managerId;
+                });
+        }
+
+        function saveChanges() {
+            const projectId = new URLSearchParams(window.location.search).get('id');
+
+            const projectName = document.getElementById("projectName").value;
+            const customerCompany = document.getElementById("customerCompany").value;
+            const executorCompany = document.getElementById("executorCompany").value;
+            const startDate = document.getElementById("startDate").value;
+            const endDate = document.getElementById("endDate").value;
+            const priority = document.getElementById("priority").value;
+            const managerId = document.getElementById("manager").value;
+
+            const projectData = {
+                projectName,
+                customerCompany,
+                executorCompany,
+                startDate,
+                endDate,
+                priority,
+                managerId
+            };
+
+            fetch(`/api/Project/${projectId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(projectData)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(() => {
+                    alert("Изменения сохранены успешно!");
+                    window.location.href = "/index.html";
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        window.onload = function () {
+            loadManagers();
+            getProjectDetails();
+        };
+    </script>
+</body>
+</html>

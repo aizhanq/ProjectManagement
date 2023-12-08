@@ -111,18 +111,18 @@
                     projects.forEach(project => {
                         const projectRow = document.createElement("tr");
                         projectRow.innerHTML = `
-                                        <td>${project.projectName}</td>
-                                        <td>${project.customerCompany}</td>
-                                        <td>${project.executorCompany}</td>
-                                        <td>${formatDate(project.startDate)}</td>
-                                        <td>${formatDate(project.endDate)}</td>
-                                        <td>${project.priority}</td>
-                                        <td>
-                                            <button onclick="viewProjectDetails(${project.projectId})">Детали</button>
-                                            <button onclick="editProject(${project.projectId})">Изменить</button>
-                                            <button onclick="deleteProject(${project.projectId})">Удалить</button>
-                                        </td>
-                                    `;
+                                <td>${project.projectName}</td>
+                                <td>${project.customerCompany}</td>
+                                <td>${project.executorCompany}</td>
+                                <td>${formatDate(project.startDate)}</td>
+                                <td>${formatDate(project.endDate)}</td>
+                                <td>${project.priority}</td>
+                                <td>
+                                    <button onclick="viewProjectDetails(${project.projectId})">Детали</button>
+                                    <button onclick="editProject(${project.projectId})">Изменить</button>
+                                    <button onclick="deleteProject(${project.projectId})">Удалить</button>
+                                </td>
+                            `;
                         projectsList.appendChild(projectRow);
                     });
                 });
@@ -133,7 +133,7 @@
         }
 
         function editProject(projectId) {
-            alert("Редактирование проекта: " + projectId);
+            window.location.href = `/editProject.html?id=${projectId}`;
         }
 
         function deleteProject(projectId) {
@@ -174,7 +174,10 @@
             sortedRows.forEach(row => tbody.appendChild(row));
         }
 
-        window.onload = updateProjectsList;
+        window.onload = function () {
+            updateProjectsList();
+            loadManagers();
+        };
     </script>
 </body>
 </html>
