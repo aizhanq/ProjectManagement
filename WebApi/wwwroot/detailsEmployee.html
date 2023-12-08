@@ -40,12 +40,12 @@
     <h2>Проекты, в которых участвует сотрудник</h2>
     <ul id="employeeProjects"></ul>
 
-    <h2>Проекты, которыми управляет сотрудник</h2>
-    <ul id="managerProjects"></ul>
-
     <h2>Добавить проект сотруднику</h2>
     <select id="projectDropdown"></select>
     <button onclick="handleAddProject()">Добавить проект</button>
+
+    <h2>Проекты, которыми управляет сотрудник</h2>
+    <ul id="managerProjects"></ul>
 
     <script>
 
@@ -67,11 +67,11 @@
                 .then(employee => {
                     const employeeDetails = document.getElementById("employeeDetails");
                     employeeDetails.innerHTML = `
-                                    <p><strong>Имя:</strong> ${employee.firstName}</p>
-                                    <p><strong>Фамилия:</strong> ${employee.lastName}</p>
-                                    <p><strong>Отчество:</strong> ${employee.middleName || '-'}</p>
-                                    <p><strong>Email:</strong> ${employee.email}</p>
-                                `;
+                                        <p><strong>Имя:</strong> ${employee.firstName}</p>
+                                        <p><strong>Фамилия:</strong> ${employee.lastName}</p>
+                                        <p><strong>Отчество:</strong> ${employee.middleName || '-'}</p>
+                                        <p><strong>Email:</strong> ${employee.email}</p>
+                                    `;
                 });
 
             updateProjectsList();
@@ -102,9 +102,9 @@
                 .then(projects => {
                     const employeeProjects = document.getElementById("employeeProjects");
                     employeeProjects.innerHTML = projects.map(project => `
-                                    <li>${project.projectName}
-                                        <button onclick="handleDeleteProject(${project.projectId})">Удалить</button>
-                                    </li>`).join('');
+                                        <li>${project.projectName}
+                                            <button onclick="handleDeleteProject(${project.projectId})">Удалить</button>
+                                        </li>`).join('');
                 });
         };
 
@@ -126,7 +126,7 @@
                 .then(projects => {
                     const projectDropdown = document.getElementById("projectDropdown");
                     projectDropdown.innerHTML = projects.map(project => `
-                                    <option value="${project.projectId}">${project.projectName}</option>`).join('');
+                                        <option value="${project.projectId}">${project.projectName}</option>`).join('');
                 });
         };
 
