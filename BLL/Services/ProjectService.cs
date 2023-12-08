@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using BLL.DTO;
-using BLL.Infrastructure;
 using BLL.Interfaces;
 using DAL.Entities;
 using DAL.Interfaces;
@@ -32,39 +31,35 @@ namespace BLL.Services
 
         public async Task CreateProjectAsync(ProjectDTO projectDTO)
         {
-            ValidatePriority(projectDTO.Priority);
-
             var project = _mapper.Map<Project>(projectDTO);
             await _unitOfWork.Projects.CreateProjectAsync(project);
         }
 
         public async Task UpdateProjectAsync(ProjectDTO projectDTO)
         {
-            ValidatePriority(projectDTO.Priority);
-
-            var existingProject = await _unitOfWork.Projects.GetProjectByIdAsync(projectDTO.ProjectId);
-
-            if (existingProject == null)
-                throw new ValidationException("Project not found.", nameof(projectDTO.ProjectId));
-
-            _mapper.Map(projectDTO, existingProject);
-            await _unitOfWork.Projects.UpdateProjectAsync(existingProject);
+            var project = _mapper.Map<Project>(projectDTO);
+            await _unitOfWork.Projects.UpdateProjectAsync(project);
         }
 
         public async Task DeleteProjectAsync(int projectId)
         {
-            var existingProject = await _unitOfWork.Projects.GetProjectByIdAsync(projectId);
-
-            if (existingProject == null)
-                throw new ValidationException("Project not found.", nameof(projectId));
-
             await _unitOfWork.Projects.DeleteProjectAsync(projectId);
         }
 
-        private void ValidatePriority(int priority)
+        public async Task<IEnumerable<EmployeeDTO>> GetEmployeesByProjectIdAsync(int projectId)
         {
-            if (priority < 1 || priority > 5)
-                throw new ValidationException("Invalid priority value. Priority must be between 1 and 5.", nameof(priority));
+            var employees = await _unitOfWork.Projects.GetEmployeesByProjectIdAsync(projectId);
+            return _mapper.Map<IEnumerable<EmployeeDTO>>(employees);
+        }
+
+        public async Task AddEmployeeToProjectAsync(int projectId, int employeeId)
+        {
+            await _unitOfWork.Projects.AddEmployeeToProjectAsync(projectId, employeeId);
+        }
+
+        public async Task RemoveEmployeeFromProjectAsync(int projectId, int employeeId)
+        {
+            await _unitOfWork.Projects.RemoveEmployeeFromProjectAsync(projectId, employeeId);
         }
     }
 }

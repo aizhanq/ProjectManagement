@@ -9,5 +9,9 @@ namespace DAL.Interfaces
         Task CreateEmployeeAsync(Employee employee);
         Task UpdateEmployeeAsync(Employee employee);
         Task DeleteEmployeeAsync(int employeeId);
+
+        Task<IEnumerable<Project>> GetProjectsByEmployeeIdAsync(int employeeId);
+        Task AddProjectToEmployeeAsync(int employeeId, int projectId);
+        Task RemoveProjectFromEmployeeAsync(int employeeId, int projectId);
     }
 }

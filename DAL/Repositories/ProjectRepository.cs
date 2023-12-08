@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DAL.EF;
 using DAL.Entities;
-using DAL.EF;
 using DAL.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Repositories
 {
@@ -42,6 +42,41 @@ namespace DAL.Repositories
             if (project != null)
             {
                 _context.Projects.Remove(project);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<IEnumerable<Employee>> GetEmployeesByProjectIdAsync(int projectId)
+        {
+            var employees = await _context.EmployeeProjects
+                .Where(ep => ep.ProjectId == projectId)
+                .Select(ep => ep.Employee)
+                .ToListAsync();
+
+            return employees;
+        }
+
+        public async Task AddEmployeeToProjectAsync(int projectId, int employeeId)
+        {
+            var employeeProject = new EmployeeProject
+            {
+                EmployeeId = employeeId,
+                ProjectId = projectId
+            };
+
+            _context.EmployeeProjects.Add(employeeProject);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task RemoveEmployeeFromProjectAsync(int projectId, int employeeId)
+        {
+            var employeeProject = await _context.EmployeeProjects
+                .Where(ep => ep.EmployeeId == employeeId && ep.ProjectId == projectId)
+                .FirstOrDefaultAsync();
+
+            if (employeeProject != null)
+            {
+                _context.EmployeeProjects.Remove(employeeProject);
                 await _context.SaveChangesAsync();
             }
         }

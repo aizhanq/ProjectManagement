@@ -1,81 +1,99 @@
-﻿using AutoMapper;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using BLL.DTO;
 using BLL.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using WebApi.Models;
 
-[ApiController]
-[Route("api/[controller]")]
-public class EmployeesController : ControllerBase
+namespace WebApi.Controllers
 {
-    private readonly IEmployeeService _employeeService;
-    private readonly IMapper _mapper;
-
-    public EmployeesController(IEmployeeService employeeService, IMapper mapper)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class EmployeeController : ControllerBase
     {
-        _employeeService = employeeService;
-        _mapper = mapper;
-    }
+        private readonly IEmployeeService _employeeService;
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<EmployeeModel>>> GetEmployees()
-    {
-        var employees = await _employeeService.GetEmployeesAsync();
-        var employeeModels = _mapper.Map<IEnumerable<EmployeeModel>>(employees);
-        return Ok(employeeModels);
-    }
+        public EmployeeController(IEmployeeService employeeService)
+        {
+            _employeeService = employeeService;
+        }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<EmployeeModel>> GetEmployeeById(int id)
-    {
-        var employee = await _employeeService.GetEmployeeByIdAsync(id);
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<EmployeeDTO>>> GetEmployees()
+        {
+            var employees = await _employeeService.GetEmployeesAsync();
+            return Ok(employees);
+        }
 
-        if (employee == null)
-            return NotFound();
+        [HttpGet("{id}")]
+        public async Task<ActionResult<EmployeeDTO>> GetEmployeeById(int id)
+        {
+            var employee = await _employeeService.GetEmployeeByIdAsync(id);
 
-        var employeeModel = _mapper.Map<EmployeeModel>(employee);
-        return Ok(employeeModel);
-    }
+            if (employee == null)
+            {
+                return NotFound();
+            }
 
-    [HttpPost]
-    public async Task<ActionResult> CreateEmployee([FromBody] EmployeeModel employeeModel)
-    {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
+            return Ok(employee);
+        }
 
-        var employeeDTO = _mapper.Map<EmployeeDTO>(employeeModel);
-        await _employeeService.CreateEmployeeAsync(employeeDTO);
+        [HttpPost]
+        public async Task<ActionResult> CreateEmployee([FromBody] EmployeeDTO employeeDTO)
+        {
+            await _employeeService.CreateEmployeeAsync(employeeDTO);
+            return Ok();
+        }
 
-        return CreatedAtAction(nameof(GetEmployeeById), new { id = employeeDTO.EmployeeId }, employeeDTO);
-    }
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateEmployee(int id, [FromBody] EmployeeDTO employeeDTO)
+        {
+            var existingEmployee = await _employeeService.GetEmployeeByIdAsync(id);
 
-    [HttpPut("{id}")]
-    public async Task<ActionResult> UpdateEmployee(int id, [FromBody] EmployeeModel employeeModel)
-    {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
+            if (existingEmployee == null)
+            {
+                return NotFound();
+            }
 
-        var existingEmployee = await _employeeService.GetEmployeeByIdAsync(id);
+            employeeDTO.EmployeeId = id;
+            await _employeeService.UpdateEmployeeAsync(employeeDTO);
 
-        if (existingEmployee == null)
-            return NotFound();
+            return Ok();
+        }
 
-        _mapper.Map(employeeModel, existingEmployee);
-        await _employeeService.UpdateEmployeeAsync(_mapper.Map<EmployeeDTO>(existingEmployee));
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteEmployee(int id)
+        {
+            var existingEmployee = await _employeeService.GetEmployeeByIdAsync(id);
 
-        return NoContent();
-    }
+            if (existingEmployee == null)
+            {
+                return NotFound();
+            }
 
-    [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteEmployee(int id)
-    {
-        var existingEmployee = await _employeeService.GetEmployeeByIdAsync(id);
+            await _employeeService.DeleteEmployeeAsync(id);
 
-        if (existingEmployee == null)
-            return NotFound();
+            return Ok();
+        }
 
-        await _employeeService.DeleteEmployeeAsync(id);
+        [HttpGet("{employeeId}/projects")]
+        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetProjectsByEmployeeId(int employeeId)
+        {
+            var projects = await _employeeService.GetProjectsByEmployeeIdAsync(employeeId);
+            return Ok(projects);
+        }
 
-        return NoContent();
+        [HttpPost("{employeeId}/projects/{projectId}")]
+        public async Task<ActionResult> AddProjectToEmployee(int employeeId, int projectId)
+        {
+            await _employeeService.AddProjectToEmployeeAsync(employeeId, projectId);
+            return Ok();
+        }
+
+        [HttpDelete("{employeeId}/projects/{projectId}")]
+        public async Task<ActionResult> RemoveProjectFromEmployee(int employeeId, int projectId)
+        {
+            await _employeeService.RemoveProjectFromEmployeeAsync(employeeId, projectId);
+            return Ok();
+        }
     }
 }

@@ -4,6 +4,7 @@ using DAL.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20231207131845_EmployeeProject")]
+    partial class EmployeeProject
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,12 +47,7 @@ namespace DAL.Migrations
                     b.Property<string>("MiddleName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProjectId")
-                        .HasColumnType("int");
-
                     b.HasKey("EmployeeId");
-
-                    b.HasIndex("ProjectId");
 
                     b.ToTable("Employees");
                 });
@@ -89,9 +86,6 @@ namespace DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ManagerId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Priority")
                         .HasColumnType("int");
 
@@ -104,28 +98,19 @@ namespace DAL.Migrations
 
                     b.HasKey("ProjectId");
 
-                    b.HasIndex("ManagerId");
-
                     b.ToTable("Projects");
-                });
-
-            modelBuilder.Entity("DAL.Entities.Employee", b =>
-                {
-                    b.HasOne("DAL.Entities.Project", null)
-                        .WithMany("Employees")
-                        .HasForeignKey("ProjectId");
                 });
 
             modelBuilder.Entity("DAL.Entities.EmployeeProject", b =>
                 {
                     b.HasOne("DAL.Entities.Employee", "Employee")
-                        .WithMany()
+                        .WithMany("EmployeeProjects")
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("DAL.Entities.Project", "Project")
-                        .WithMany()
+                        .WithMany("EmployeeProjects")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -135,25 +120,14 @@ namespace DAL.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("DAL.Entities.Project", b =>
-                {
-                    b.HasOne("DAL.Entities.Employee", "Manager")
-                        .WithMany("Projects")
-                        .HasForeignKey("ManagerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Manager");
-                });
-
             modelBuilder.Entity("DAL.Entities.Employee", b =>
                 {
-                    b.Navigation("Projects");
+                    b.Navigation("EmployeeProjects");
                 });
 
             modelBuilder.Entity("DAL.Entities.Project", b =>
                 {
-                    b.Navigation("Employees");
+                    b.Navigation("EmployeeProjects");
                 });
 #pragma warning restore 612, 618
         }

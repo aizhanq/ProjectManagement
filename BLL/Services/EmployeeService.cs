@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
 using BLL.DTO;
-using BLL.Infrastructure;
 using BLL.Interfaces;
 using DAL.Entities;
 using DAL.Interfaces;
-using DAL.Repositories;
 
 namespace BLL.Services
 {
@@ -39,23 +37,29 @@ namespace BLL.Services
 
         public async Task UpdateEmployeeAsync(EmployeeDTO employeeDTO)
         {
-            var existingEmployee = await _unitOfWork.Employees.GetEmployeeByIdAsync(employeeDTO.EmployeeId);
-
-            if (existingEmployee == null)
-                throw new ValidationException("Employee not found.", nameof(employeeDTO.EmployeeId));
-
-            _mapper.Map(employeeDTO, existingEmployee);
-            await _unitOfWork.Employees.UpdateEmployeeAsync(existingEmployee);
+            var employee = _mapper.Map<Employee>(employeeDTO);
+            await _unitOfWork.Employees.UpdateEmployeeAsync(employee);
         }
 
         public async Task DeleteEmployeeAsync(int employeeId)
         {
-            var existingEmployee = await _unitOfWork.Employees.GetEmployeeByIdAsync(employeeId);
-
-            if (existingEmployee == null)
-                throw new ValidationException("Employee not found.", nameof(employeeId));
-
             await _unitOfWork.Employees.DeleteEmployeeAsync(employeeId);
+        }
+
+        public async Task<IEnumerable<ProjectDTO>> GetProjectsByEmployeeIdAsync(int employeeId)
+        {
+            var projects = await _unitOfWork.Employees.GetProjectsByEmployeeIdAsync(employeeId);
+            return _mapper.Map<IEnumerable<ProjectDTO>>(projects);
+        }
+
+        public async Task AddProjectToEmployeeAsync(int employeeId, int projectId)
+        {
+            await _unitOfWork.Employees.AddProjectToEmployeeAsync(employeeId, projectId);
+        }
+
+        public async Task RemoveProjectFromEmployeeAsync(int employeeId, int projectId)
+        {
+            await _unitOfWork.Employees.RemoveProjectFromEmployeeAsync(employeeId, projectId);
         }
     }
 }
