@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Details</title>
+    <title>Детали проекта</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -27,6 +27,9 @@
 <body>
     <h1>Детали проекта</h1>
 
+    <!-- Кнопка для перехода на страницу редактирования проекта -->
+    <button onclick="goToEditProject()">Редактировать проект</button>
+
     <div id="projectDetails"></div>
     <h2>Сотрудники проекта</h2>
     <ul id="projectEmployees"></ul>
@@ -35,8 +38,8 @@
     <select id="employeeDropdown"></select>
     <button onclick="handleAddEmployee()">Добавить в проект</button>
 
-
     <script>
+
         const urlParams = new URLSearchParams(window.location.search);
         const projectId = urlParams.get('id');
 
@@ -65,14 +68,14 @@
                 .then(project => {
                     const projectDetails = document.getElementById("projectDetails");
                     projectDetails.innerHTML = `
-                                    <p><strong>Название проекта:</strong> ${project.projectName}</p>
-                                    <p><strong>Заказчик:</strong> ${project.customerCompany}</p>
-                                    <p><strong>Исполнитель:</strong> ${project.executorCompany}</p>
-                                    <p><strong>Менеджер:</strong> <span id="managerName"></span></p>
-                                    <p><strong>Дата начала:</strong> ${formatDateTime(project.startDate)}</p>
-                                    <p><strong>Дата окончания:</strong> ${formatDateTime(project.endDate)}</p>
-                                    <p><strong>Приоритет:</strong> ${project.priority}</p>
-                                `;
+                                <p><strong>Название проекта:</strong> ${project.projectName}</p>
+                                <p><strong>Заказчик:</strong> ${project.customerCompany}</p>
+                                <p><strong>Исполнитель:</strong> ${project.executorCompany}</p>
+                                <p><strong>Менеджер:</strong> <span id="managerName"></span></p>
+                                <p><strong>Дата начала:</strong> ${formatDateTime(project.startDate)}</p>
+                                <p><strong>Дата окончания:</strong> ${formatDateTime(project.endDate)}</p>
+                                <p><strong>Приоритет:</strong> ${project.priority}</p>
+                            `;
 
                     // Добавлено обновление имени менеджера
                     const managerNameElement = document.getElementById("managerName");
@@ -93,9 +96,9 @@
                 .then(employees => {
                     const projectEmployees = document.getElementById("projectEmployees");
                     projectEmployees.innerHTML = employees.map(employee => `
-                                    <li>${employee.firstName} ${employee.lastName}
-                                        <button onclick="handleDeleteEmployee(${employee.employeeId})">Удалить</button>
-                                    </li>`).join('');
+                                <li>${employee.firstName} ${employee.lastName}
+                                    <button onclick="handleDeleteEmployee(${employee.employeeId})">Удалить</button>
+                                </li>`).join('');
                 });
         };
 
@@ -105,8 +108,13 @@
                 .then(employees => {
                     const employeeDropdown = document.getElementById("employeeDropdown");
                     employeeDropdown.innerHTML = employees.map(employee => `
-                                    <option value="${employee.employeeId}">${employee.firstName} ${employee.lastName}</option>`).join('');
+                                <option value="${employee.employeeId}">${employee.firstName} ${employee.lastName}</option>`).join('');
                 });
+        };
+
+        // Добавлена функция для перехода на страницу редактирования проекта
+        const goToEditProject = () => {
+            window.location.href = `/editProject.html?id=${projectId}`;
         };
 
         window.onload = updateDetails;
