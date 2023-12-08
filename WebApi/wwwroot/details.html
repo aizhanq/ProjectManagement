@@ -4,161 +4,114 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h1, h2 {
+            color: #007bff;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-right: 5px;
+        }
+    </style>
 </head>
 <body>
     <h1>Детали проекта</h1>
 
-    <!-- Здесь будут отображаться детали проекта -->
-    <div id="projectDetails">
-        <!-- Информация о проекте будет добавлена с помощью JavaScript -->
-    </div>
-
+    <div id="projectDetails"></div>
     <h2>Сотрудники проекта</h2>
+    <ul id="projectEmployees"></ul>
 
-    <!-- Здесь будут отображаться сотрудники проекта -->
-    <ul id="projectEmployees">
-        <!-- Информация о сотрудниках будет добавлена с помощью JavaScript -->
-    </ul>
-
-    <!-- Поле с выпадающим списком всех сотрудников -->
-    <label for="employeeDropdown">Добавить сотрудника:</label>
-    <select id="employeeDropdown">
-        <!-- Опции будут добавлены с помощью JavaScript -->
-    </select>
-
-    <!-- Кнопка "Добавить в проект" -->
+    <h2>Добавить сотрудника в проект</h2>
+    <select id="employeeDropdown"></select>
     <button onclick="handleAddEmployee()">Добавить в проект</button>
 
-    <script>
-        // Ваши скрипты здесь
+    <!-- Добавить после сотрудников -->
+    <p><strong>Менеджер:</strong> <span id="managerName"></span></p>
 
-        // Получаем id проекта из URL
+    <script>
         const urlParams = new URLSearchParams(window.location.search);
         const projectId = urlParams.get('id');
 
-        // Обработчик события для удаления сотрудника
+        const formatDateTime = (dateTimeString) => new Date(dateTimeString).toLocaleString();
+
         const handleDeleteEmployee = (employeeId) => {
-            // Запрос на удаление сотрудника из проекта
-            fetch(`/api/Project/${projectId}/employees/${employeeId}`, {
-                method: 'DELETE'
-            })
-                .then(response => {
-                    if (response.ok) {
-                        // Обновляем список сотрудников после удаления
-                        fetch(`/api/Project/${projectId}/employees`)
-                            .then(response => response.json())
-                            .then(employees => {
-                                const projectEmployees = document.getElementById("projectEmployees");
-                                // Очищаем текущий список
-                                projectEmployees.innerHTML = "";
-                                employees.forEach(employee => {
-                                    const listItem = document.createElement("li");
-                                    listItem.textContent = `${employee.firstName} ${employee.lastName}  `;
-
-                                    // Добавляем кнопку "Удалить" с обработчиком события
-                                    const deleteButton = document.createElement("button");
-                                    deleteButton.textContent = "Удалить";
-                                    deleteButton.addEventListener("click", () => handleDeleteEmployee(employee.employeeId));
-
-                                    // Добавляем кнопку к списку сотрудников
-                                    listItem.appendChild(deleteButton);
-                                    projectEmployees.appendChild(listItem);
-                                });
-                            });
-                    } else {
-                        console.error('Failed to delete employee');
-                    }
-                })
+            fetch(`/api/Project/${projectId}/employees/${employeeId}`, { method: 'DELETE' })
+                .then(response => response.ok && updateEmployeesList())
                 .catch(error => console.error('Error:', error));
         };
 
-        // Запрашиваем информацию о проекте
-        fetch(`/api/Project/${projectId}`)
-            .then(response => response.json())
-            .then(project => {
-                const projectDetails = document.getElementById("projectDetails");
-                projectDetails.innerHTML = `
-                            <p><strong>Название проекта:</strong> ${project.projectName}</p>
-                            <p><strong>Заказчик:</strong> ${project.customerCompany}</p>
-                            <p><strong>Исполнитель:</strong> ${project.executorCompany}</p>
-                            <p><strong>Дата начала:</strong> ${project.startDate}</p>
-                            <p><strong>Дата окончания:</strong> ${project.endDate}</p>
-                            <p><strong>Приоритет:</strong> ${project.priority}</p>
-                        `;
-            });
-
-        // Запрашиваем информацию о сотрудниках проекта
-        fetch(`/api/Project/${projectId}/employees`)
-            .then(response => response.json())
-            .then(employees => {
-                const projectEmployees = document.getElementById("projectEmployees");
-                employees.forEach(employee => {
-                    const listItem = document.createElement("li");
-                    listItem.textContent = `${employee.firstName} ${employee.lastName}  `;
-
-                    // Добавляем кнопку "Удалить" с обработчиком события
-                    const deleteButton = document.createElement("button");
-                    deleteButton.textContent = "Удалить";
-                    deleteButton.addEventListener("click", () => handleDeleteEmployee(employee.employeeId));
-
-                    // Добавляем кнопку к списку сотрудников
-                    listItem.appendChild(deleteButton);
-                    projectEmployees.appendChild(listItem);
-                });
-            });
-
-        // Запрашиваем информацию обо всех сотрудниках для выпадающего списка
-        fetch(`/api/Employee`)
-            .then(response => response.json())
-            .then(employees => {
-                const employeeDropdown = document.getElementById("employeeDropdown");
-
-                // Добавляем опции для каждого сотрудника
-                employees.forEach(employee => {
-                    const option = document.createElement("option");
-                    option.value = employee.employeeId;
-                    option.textContent = `${employee.firstName} ${employee.lastName}`;
-                    employeeDropdown.appendChild(option);
-                });
-            });
-
-        // Обработчик события для добавления сотрудника в проект
         const handleAddEmployee = () => {
-            const employeeId = document.getElementById("employeeDropdown").value;
+            const employeeDropdown = document.getElementById("employeeDropdown");
+            const selectedEmployeeId = employeeDropdown.value;
 
-            // Запрос на добавление сотрудника в проект
-            fetch(`/api/Project/${projectId}/employees/${employeeId}`, {
-                method: 'POST'
-            })
-                .then(response => {
-                    if (response.ok) {
-                        // Обновляем список сотрудников после добавления
-                        fetch(`/api/Project/${projectId}/employees`)
-                            .then(response => response.json())
-                            .then(employees => {
-                                const projectEmployees = document.getElementById("projectEmployees");
-                                // Очищаем текущий список
-                                projectEmployees.innerHTML = "";
-                                employees.forEach(employee => {
-                                    const listItem = document.createElement("li");
-                                    listItem.textContent = `${employee.firstName} ${employee.lastName}  `;
-
-                                    // Добавляем кнопку "Удалить" с обработчиком события
-                                    const deleteButton = document.createElement("button");
-                                    deleteButton.textContent = "Удалить";
-                                    deleteButton.addEventListener("click", () => handleDeleteEmployee(employee.employeeId));
-
-                                    // Добавляем кнопку к списку сотрудников
-                                    listItem.appendChild(deleteButton);
-                                    projectEmployees.appendChild(listItem);
-                                });
-                            });
-                    } else {
-                        console.error('Failed to add employee to project');
-                    }
-                })
-                .catch(error => console.error('Error:', error));
+            if (selectedEmployeeId) {
+                fetch(`/api/Project/${projectId}/employees/${selectedEmployeeId}`, { method: 'POST' })
+                    .then(response => response.ok && updateEmployeesList())
+                    .catch(error => console.error('Error:', error));
+            }
         };
+
+        const updateDetails = () => {
+            fetch(`/api/Project/${projectId}`)
+                .then(response => response.json())
+                .then(project => {
+                    const projectDetails = document.getElementById("projectDetails");
+                    projectDetails.innerHTML = `
+                                    <p><strong>Название проекта:</strong> ${project.projectName}</p>
+                                    <p><strong>Заказчик:</strong> ${project.customerCompany}</p>
+                                    <p><strong>Исполнитель:</strong> ${project.executorCompany}</p>
+                                    <p><strong>Менеджер:</strong> <span id="managerName"></span></p>
+                                    <p><strong>Дата начала:</strong> ${formatDateTime(project.startDate)}</p>
+                                    <p><strong>Дата окончания:</strong> ${formatDateTime(project.endDate)}</p>
+                                    <p><strong>Приоритет:</strong> ${project.priority}</p>
+                                `;
+
+                    // Добавлено обновление имени менеджера
+                    const managerNameElement = document.getElementById("managerName");
+                    fetch(`/api/Employee/${project.managerId}`)
+                        .then(response => response.json())
+                        .then(manager => {
+                            managerNameElement.textContent = `${manager.firstName} ${manager.lastName}`;
+                        });
+                });
+
+            updateEmployeesList();
+            updateEmployeeDropdown();
+        };
+
+        const updateEmployeesList = () => {
+            fetch(`/api/Project/${projectId}/employees`)
+                .then(response => response.json())
+                .then(employees => {
+                    const projectEmployees = document.getElementById("projectEmployees");
+                    projectEmployees.innerHTML = employees.map(employee => `
+                                    <li>${employee.firstName} ${employee.lastName}
+                                        <button onclick="handleDeleteEmployee(${employee.employeeId})">Удалить</button>
+                                    </li>`).join('');
+                });
+        };
+
+        const updateEmployeeDropdown = () => {
+            fetch(`/api/Employee`)
+                .then(response => response.json())
+                .then(employees => {
+                    const employeeDropdown = document.getElementById("employeeDropdown");
+                    employeeDropdown.innerHTML = employees.map(employee => `
+                                    <option value="${employee.employeeId}">${employee.firstName} ${employee.lastName}</option>`).join('');
+                });
+        };
+
+        window.onload = updateDetails;
     </script>
 </body>
 </html>
