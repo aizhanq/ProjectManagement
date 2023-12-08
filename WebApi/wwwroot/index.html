@@ -1,4 +1,5 @@
 ﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -93,8 +94,8 @@
     <table>
         <thead>
             <tr>
-                <th>ФИО</th>
-                <th>Email</th>
+                <th onclick="sortTableEmployees(0)">ФИО</th>
+                <th onclick="sortTableEmployees(1)">Email</th>
                 <th>Действия</th>
             </tr>
         </thead>
@@ -137,18 +138,18 @@
                     projects.forEach(project => {
                         const projectRow = document.createElement("tr");
                         projectRow.innerHTML = `
-                                                <td>${project.projectName}</td>
-                                                <td>${project.customerCompany}</td>
-                                                <td>${project.executorCompany}</td>
-                                                <td>${formatDate(project.startDate)}</td>
-                                                <td>${formatDate(project.endDate)}</td>
-                                                <td>${project.priority}</td>
-                                                <td>
-                                                    <button onclick="viewProjectDetails(${project.projectId})">Детали</button>
-                                                    <button onclick="editProject(${project.projectId})">Редактировать</button>
-                                                    <button onclick="deleteProject(${project.projectId})">Удалить</button>
-                                                </td>
-                                            `;
+                                                    <td>${project.projectName}</td>
+                                                    <td>${project.customerCompany}</td>
+                                                    <td>${project.executorCompany}</td>
+                                                    <td>${formatDate(project.startDate)}</td>
+                                                    <td>${formatDate(project.endDate)}</td>
+                                                    <td>${project.priority}</td>
+                                                    <td>
+                                                        <button onclick="viewProjectDetails(${project.projectId})">Детали</button>
+                                                        <button onclick="editProject(${project.projectId})">Редактировать</button>
+                                                        <button onclick="deleteProject(${project.projectId})">Удалить</button>
+                                                    </td>
+                                                `;
                         projectsList.appendChild(projectRow);
                     });
                 });
@@ -163,19 +164,23 @@
         }
 
         function deleteProject(projectId) {
-            fetch(`/api/Project/${projectId}`, {
-                method: 'DELETE'
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                    return response.text();
+            // Добавлено подтверждение перед удалением проекта
+            const confirmDelete = confirm("Вы уверены, что хотите удалить проект?");
+            if (confirmDelete) {
+                fetch(`/api/Project/${projectId}`, {
+                    method: 'DELETE'
                 })
-                .then(() => {
-                    updateProjectsList();
-                })
-                .catch(error => console.error('Error:', error));
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.text();
+                    })
+                    .then(() => {
+                        updateProjectsList();
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
         }
 
         function updateEmployeesList() {
@@ -188,14 +193,14 @@
                     employees.forEach(employee => {
                         const employeeRow = document.createElement("tr");
                         employeeRow.innerHTML = `
-                                    <td>${employee.firstName} ${employee.lastName}</td>
-                                    <td>${employee.email}</td>
-                                    <td>
-                                        <button onclick="viewEmployeeDetails(${employee.employeeId})">Детали</button>
-                                        <button onclick="editEmployee(${employee.employeeId})">Редактировать</button>
-                                        <button onclick="deleteEmployee(${employee.employeeId})">Удалить</button>
-                                    </td>
-                                `;
+                                        <td>${employee.firstName} ${employee.lastName}</td>
+                                        <td>${employee.email}</td>
+                                        <td>
+                                            <button onclick="viewEmployeeDetails(${employee.employeeId})">Детали</button>
+                                            <button onclick="editEmployee(${employee.employeeId})">Редактировать</button>
+                                            <button onclick="deleteEmployee(${employee.employeeId})">Удалить</button>
+                                        </td>
+                                    `;
                         employeesList.appendChild(employeeRow);
                     });
                 });
@@ -210,40 +215,64 @@
         }
 
         function deleteEmployee(employeeId) {
-            // Проверяем, является ли сотрудник менеджером проекта
-            fetch(`/api/Project/manager/${employeeId}`)
-                .then(response => {
-                    if (!response.ok) {
-                        // Если сотрудник менеджер проекта, выводим сообщение и прерываем удаление
-                        alert("Нельзя удалить сотрудника, так как он является менеджером проекта.");
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                    return response.text();
-                })
-                .then(() => {
-                    // Если сотрудник не является менеджером проекта, продолжаем удаление
-                    fetch(`/api/Employee/${employeeId}`, {
-                        method: 'DELETE'
+            // Добавлено подтверждение перед удалением сотрудника
+            const confirmDelete = confirm("Вы уверены, что хотите удалить сотрудника?");
+            if (confirmDelete) {
+                // Проверяем, является ли сотрудник менеджером проекта
+                fetch(`/api/Project/manager/${employeeId}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            // Если сотрудник менеджер проекта, выводим сообщение и прерываем удаление
+                            alert("Нельзя удалить сотрудника, так как он является менеджером проекта.");
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.text();
                     })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error(`HTTP error! Status: ${response.status}`);
-                            }
-                            return response.text();
+                    .then(() => {
+                        // Если сотрудник не является менеджером проекта, продолжаем удаление
+                        fetch(`/api/Employee/${employeeId}`, {
+                            method: 'DELETE'
                         })
-                        .then(() => {
-                            updateEmployeesList();
-                        })
-                        .catch(error => console.error('Error:', error));
-                })
-                .catch(error => console.error('Error:', error));
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`HTTP error! Status: ${response.status}`);
+                                }
+                                return response.text();
+                            })
+                            .then(() => {
+                                updateEmployeesList();
+                            })
+                            .catch(error => console.error('Error:', error));
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
         }
-
-
 
         // Функция сортировки таблицы по столбцу
         function sortTable(columnIndex) {
             const table = document.querySelector('table');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+
+            // Определение направления сортировки (по возрастанию или убыванию)
+            const asc = table.classList.toggle('asc');
+
+            // Сортировка строк
+            const sortedRows = rows.sort((a, b) => {
+                const aValue = a.children[columnIndex].textContent.trim();
+                const bValue = b.children[columnIndex].textContent.trim();
+
+                return asc ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+            });
+
+            // Обновление таблицы с отсортированными строками
+            tbody.innerHTML = '';
+            sortedRows.forEach(row => tbody.appendChild(row));
+        }
+
+        // Функция сортировки таблицы сотрудников по столбцу
+        function sortTableEmployees(columnIndex) {
+            const table = document.querySelectorAll('table')[1]; // Используем вторую таблицу (индекс 1) на странице
             const tbody = table.querySelector('tbody');
             const rows = Array.from(tbody.querySelectorAll('tr'));
 

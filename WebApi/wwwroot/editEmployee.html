@@ -1,0 +1,109 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактировать сотрудника</title>
+    <style>
+        /* Ваши стили здесь */
+        form {
+            width: 50%;
+            margin: 50px auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input, select, button {
+            margin-bottom: 10px;
+            width: 100%;
+            padding: 8px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <form id="editEmployeeForm">
+        <label for="firstName">Имя:</label>
+        <input type="text" id="firstName" required>
+
+        <label for="lastName">Фамилия:</label>
+        <input type="text" id="lastName" required>
+
+        <label for="middleName">Отчество:</label>
+        <input type="text" id="middleName">
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" required>
+
+        <button type="button" onclick="saveChanges()">Сохранить изменения</button>
+    </form>
+
+    <script>
+        // Ваши скрипты здесь
+
+        function getEmployeeDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const employeeId = urlParams.get('id');
+
+            fetch(`/api/Employee/${employeeId}`)
+                .then(response => response.json())
+                .then(employee => {
+                    document.getElementById("firstName").value = employee.firstName;
+                    document.getElementById("lastName").value = employee.lastName;
+                    document.getElementById("middleName").value = employee.middleName;
+                    document.getElementById("email").value = employee.email;
+                });
+        }
+
+        function saveChanges() {
+            const employeeId = new URLSearchParams(window.location.search).get('id');
+
+            const firstName = document.getElementById("firstName").value;
+            const lastName = document.getElementById("lastName").value;
+            const middleName = document.getElementById("middleName").value;
+            const email = document.getElementById("email").value;
+
+            const employeeData = {
+                firstName,
+                lastName,
+                middleName,
+                email
+            };
+
+            fetch(`/api/Employee/${employeeId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(employeeData)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(() => {
+                    alert("Изменения сохранены успешно!");
+                    window.location.href = "/index.html";
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        window.onload = function () {
+            getEmployeeDetails();
+        };
+    </script>
+</body>
+</html>
