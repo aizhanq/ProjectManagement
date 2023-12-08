@@ -4,25 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Детали проекта</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-
-        h1, h2 {
-            color: #007bff;
-        }
-
-        button {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 8px 12px;
-            cursor: pointer;
-            border-radius: 5px;
-            margin-right: 5px;
-        }
-    </style>
+    <!-- В head секции HTML-файлов -->
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
 </head>
 <body>
     <h1>Детали проекта</h1>
@@ -76,14 +59,14 @@
                 .then(project => {
                     const projectDetails = document.getElementById("projectDetails");
                     projectDetails.innerHTML = `
-                                <p><strong>Название проекта:</strong> ${project.projectName}</p>
-                                <p><strong>Заказчик:</strong> ${project.customerCompany}</p>
-                                <p><strong>Исполнитель:</strong> ${project.executorCompany}</p>
-                                <p><strong>Менеджер:</strong> <span id="managerName"></span></p>
-                                <p><strong>Дата начала:</strong> ${formatDateTime(project.startDate)}</p>
-                                <p><strong>Дата окончания:</strong> ${formatDateTime(project.endDate)}</p>
-                                <p><strong>Приоритет:</strong> ${project.priority}</p>
-                            `;
+                                    <p><strong>Название проекта:</strong> ${project.projectName}</p>
+                                    <p><strong>Заказчик:</strong> ${project.customerCompany}</p>
+                                    <p><strong>Исполнитель:</strong> ${project.executorCompany}</p>
+                                    <p><strong>Менеджер:</strong> <span id="managerName"></span></p>
+                                    <p><strong>Дата начала:</strong> ${formatDateTime(project.startDate)}</p>
+                                    <p><strong>Дата окончания:</strong> ${formatDateTime(project.endDate)}</p>
+                                    <p><strong>Приоритет:</strong> ${project.priority}</p>
+                                `;
 
                     // Добавлено обновление имени менеджера
                     const managerNameElement = document.getElementById("managerName");
@@ -104,9 +87,9 @@
                 .then(employees => {
                     const projectEmployees = document.getElementById("projectEmployees");
                     projectEmployees.innerHTML = employees.map(employee => `
-                                <li>${employee.firstName} ${employee.lastName}
-                                    <button onclick="handleDeleteEmployee(${employee.employeeId})">Удалить</button>
-                                </li>`).join('');
+                                    <li>${employee.firstName} ${employee.lastName}
+                                        <button onclick="handleDeleteEmployee(${employee.employeeId})">Удалить</button>
+                                    </li>`).join('');
                 });
         };
 
@@ -116,7 +99,7 @@
                 .then(employees => {
                     const employeeDropdown = document.getElementById("employeeDropdown");
                     employeeDropdown.innerHTML = employees.map(employee => `
-                                <option value="${employee.employeeId}">${employee.firstName} ${employee.lastName}</option>`).join('');
+                                    <option value="${employee.employeeId}">${employee.firstName} ${employee.lastName}</option>`).join('');
                 });
         };
 

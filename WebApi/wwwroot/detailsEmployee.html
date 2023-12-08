@@ -4,30 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Детали сотрудника</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
+    <!-- В head секции HTML-файлов -->
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
 
-        h1, h2 {
-            color: #007bff;
-        }
-
-        button {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 8px 12px;
-            cursor: pointer;
-            border-radius: 5px;
-            margin-right: 5px;
-        }
-
-        select {
-            padding: 8px;
-            margin-right: 5px;
-        }
-    </style>
 </head>
 <body>
     <h1>Детали сотрудника</h1>
@@ -67,11 +46,11 @@
                 .then(employee => {
                     const employeeDetails = document.getElementById("employeeDetails");
                     employeeDetails.innerHTML = `
-                                        <p><strong>Имя:</strong> ${employee.firstName}</p>
-                                        <p><strong>Фамилия:</strong> ${employee.lastName}</p>
-                                        <p><strong>Отчество:</strong> ${employee.middleName || '-'}</p>
-                                        <p><strong>Email:</strong> ${employee.email}</p>
-                                    `;
+                                            <p><strong>Имя:</strong> ${employee.firstName}</p>
+                                            <p><strong>Фамилия:</strong> ${employee.lastName}</p>
+                                            <p><strong>Отчество:</strong> ${employee.middleName || '-'}</p>
+                                            <p><strong>Email:</strong> ${employee.email}</p>
+                                        `;
                 });
 
             updateProjectsList();
@@ -102,9 +81,9 @@
                 .then(projects => {
                     const employeeProjects = document.getElementById("employeeProjects");
                     employeeProjects.innerHTML = projects.map(project => `
-                                        <li>${project.projectName}
-                                            <button onclick="handleDeleteProject(${project.projectId})">Удалить</button>
-                                        </li>`).join('');
+                                            <li>${project.projectName}
+                                                <button onclick="handleDeleteProject(${project.projectId})">Удалить</button>
+                                            </li>`).join('');
                 });
         };
 
@@ -126,7 +105,7 @@
                 .then(projects => {
                     const projectDropdown = document.getElementById("projectDropdown");
                     projectDropdown.innerHTML = projects.map(project => `
-                                        <option value="${project.projectId}">${project.projectName}</option>`).join('');
+                                            <option value="${project.projectId}">${project.projectName}</option>`).join('');
                 });
         };
 
