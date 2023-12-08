@@ -121,8 +121,20 @@
         }
 
         function deleteProject(projectId) {
-            alert("Удаление проекта: " + projectId);
-            updateProjectsList();
+            fetch(`/api/Project/${projectId}`, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.text(); // Вернуть текст ответа
+                })
+                .then(() => {
+                    alert(`Проект успешно удален`);
+                    updateProjectsList(); // Обновить список проектов
+                })
+                .catch(error => console.error('Error:', error));
         }
 
         window.onload = updateProjectsList;
