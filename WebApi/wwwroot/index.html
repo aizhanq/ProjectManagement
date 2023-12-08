@@ -10,6 +10,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            cursor: pointer;
         }
 
         th, td {
@@ -93,12 +94,12 @@
     <table>
         <thead>
             <tr>
-                <th>Название проекта</th>
-                <th>Заказчик</th>
-                <th>Исполнитель</th>
-                <th>Дата начала</th>
-                <th>Дата окончания</th>
-                <th>Приоритет</th>
+                <th onclick="sortTable(0)">Название проекта</th>
+                <th onclick="sortTable(1)">Заказчик</th>
+                <th onclick="sortTable(2)">Исполнитель</th>
+                <th onclick="sortTable(3)">Дата начала</th>
+                <th onclick="sortTable(4)">Дата окончания</th>
+                <th onclick="sortTable(5)">Приоритет</th>
                 <th>Действия</th>
             </tr>
         </thead>
@@ -185,18 +186,18 @@
                     projects.forEach(project => {
                         const projectRow = document.createElement("tr");
                         projectRow.innerHTML = `
-                                <td>${project.projectName}</td>
-                                <td>${project.customerCompany}</td>
-                                <td>${project.executorCompany}</td>
-                                <td>${formatDate(project.startDate)}</td>
-                                <td>${formatDate(project.endDate)}</td>
-                                <td>${project.priority}</td>
-                                <td>
-                                    <button onclick="viewProjectDetails(${project.projectId})">Детали</button>
-                                    <button onclick="editProject(${project.projectId})">Изменить</button>
-                                    <button onclick="deleteProject(${project.projectId})">Удалить</button>
-                                </td>
-                            `;
+                                    <td>${project.projectName}</td>
+                                    <td>${project.customerCompany}</td>
+                                    <td>${project.executorCompany}</td>
+                                    <td>${formatDate(project.startDate)}</td>
+                                    <td>${formatDate(project.endDate)}</td>
+                                    <td>${project.priority}</td>
+                                    <td>
+                                        <button onclick="viewProjectDetails(${project.projectId})">Детали</button>
+                                        <button onclick="editProject(${project.projectId})">Изменить</button>
+                                        <button onclick="deleteProject(${project.projectId})">Удалить</button>
+                                    </td>
+                                `;
                         projectsList.appendChild(projectRow);
                     });
                 });
@@ -224,6 +225,28 @@
                     updateProjectsList();
                 })
                 .catch(error => console.error('Error:', error));
+        }
+
+        // Функция сортировки таблицы по столбцу
+        function sortTable(columnIndex) {
+            const table = document.querySelector('table');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+
+            // Определение направления сортировки (по возрастанию или убыванию)
+            const asc = table.classList.toggle('asc');
+
+            // Сортировка строк
+            const sortedRows = rows.sort((a, b) => {
+                const aValue = a.children[columnIndex].textContent.trim();
+                const bValue = b.children[columnIndex].textContent.trim();
+
+                return asc ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+            });
+
+            // Обновление таблицы с отсортированными строками
+            tbody.innerHTML = '';
+            sortedRows.forEach(row => tbody.appendChild(row));
         }
 
         window.onload = updateProjectsList;
