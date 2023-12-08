@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projects</title>
+    <title>Проекты</title>
     <style>
         /* Ваши стили здесь */
         table {
@@ -50,14 +50,20 @@
             padding: 8px 12px;
             cursor: pointer;
             border-radius: 5px;
+            text-decoration: none; /* Убираем стандартное подчеркивание текста в виде ссылки */
+            display: inline-block; /* Делаем кнопку блочным элементом, чтобы применять стили ширины и высоты */
         }
+
+            button:hover {
+                background-color: #0056b3; /* Изменяем цвет при наведении курсора */
+            }
     </style>
 </head>
 <body>
-    <h1>Projects</h1>
+    <h1>Проекты</h1>
 
     <!-- Кнопка для добавления проекта -->
-    <a href="/createProject.html">Добавить проект</a>
+    <button onclick="window.location.href='/addProject.html'">Добавить проект</button>
 
     <!-- Таблица проектов -->
     <table>
@@ -111,18 +117,18 @@
                     projects.forEach(project => {
                         const projectRow = document.createElement("tr");
                         projectRow.innerHTML = `
-                                <td>${project.projectName}</td>
-                                <td>${project.customerCompany}</td>
-                                <td>${project.executorCompany}</td>
-                                <td>${formatDate(project.startDate)}</td>
-                                <td>${formatDate(project.endDate)}</td>
-                                <td>${project.priority}</td>
-                                <td>
-                                    <button onclick="viewProjectDetails(${project.projectId})">Детали</button>
-                                    <button onclick="editProject(${project.projectId})">Изменить</button>
-                                    <button onclick="deleteProject(${project.projectId})">Удалить</button>
-                                </td>
-                            `;
+                                    <td>${project.projectName}</td>
+                                    <td>${project.customerCompany}</td>
+                                    <td>${project.executorCompany}</td>
+                                    <td>${formatDate(project.startDate)}</td>
+                                    <td>${formatDate(project.endDate)}</td>
+                                    <td>${project.priority}</td>
+                                    <td>
+                                        <button onclick="viewProjectDetails(${project.projectId})">Детали</button>
+                                        <button onclick="editProject(${project.projectId})">Изменить</button>
+                                        <button onclick="deleteProject(${project.projectId})">Удалить</button>
+                                    </td>
+                                `;
                         projectsList.appendChild(projectRow);
                     });
                 });
