@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Information</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+    <div class="container mt-5">
+        <h2>Employee Information</h2>
+
+        <div class="form-group">
+            <label for="employeeSelect">Select Employee:</label>
+            <select class="form-control" id="employeeSelect">
+                <!-- Employee options will be dynamically populated here -->
+            </select>
+        </div>
+
+        <button type="button" class="btn btn-primary" onclick="getEmployeeInfo()">Get Employee Info</button>
+
+        <div id="employeeInfo" class="mt-4">
+            <!-- Employee info will be displayed here -->
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
+
+    <script>
+    // Dummy data for testing, replace this with actual data from your API
+    const employees = [
+        { id: 1, name: 'John Doe' },
+        { id: 2, name: 'Jane Doe' },
+        // Add more employees as needed
+    ];
+
+    // Populate the employee dropdown list
+    const employeeSelect = document.getElementById('employeeSelect');
+    employees.forEach(employee => {
+        const option = document.createElement('option');
+        option.value = employee.id;
+        option.textContent = employee.name;
+        employeeSelect.appendChild(option);
+    });
+
+    // Function to fetch and display employee information
+    function getEmployeeInfo() {
+        const selectedEmployeeId = employeeSelect.value;
+        const employeeInfoContainer = document.getElementById('employeeInfo');
+
+        // Replace this with actual API endpoint for fetching employee information
+        // You can use fetch() or any other AJAX library for this purpose
+        // For simplicity, here's an example with dummy data
+        const dummyEmployeeInfo = {
+            id: selectedEmployeeId,
+            name: 'John Doe',
+            projects: ['Project A', 'Project B']
+            // Add more employee information as needed
+        };
+
+        // Display employee information
+        employeeInfoContainer.innerHTML = `
+            <h4>Employee Information:</h4>
+            <p><strong>ID:</strong> ${dummyEmployeeInfo.id}</p>
+            <p><strong>Name:</strong> ${dummyEmployeeInfo.name}</p>
+            <p><strong>Projects:</strong></p>
+            <ul>
+                ${dummyEmployeeInfo.projects.map(project => `<li>${project}</li>`).join('')}
+            </ul>
+        `;
+    }
+    </script>
+
+</body>
+</html>
