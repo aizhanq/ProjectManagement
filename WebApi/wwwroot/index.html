@@ -1,0 +1,131 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects</title>
+    <style>
+        /* Ваши стили здесь */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Projects</h1>
+
+    <!-- Кнопка для добавления проекта -->
+    <button onclick="openCreateProjectForm()">Добавить проект</button>
+
+    <!-- Таблица проектов -->
+    <table>
+        <thead>
+            <tr>
+                <th>Название проекта</th>
+                <th>Заказчик</th>
+                <th>Исполнитель</th>
+                <th>Дата начала</th>
+                <th>Дата окончания</th>
+                <th>Приоритет</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody id="projectsList">
+            <!-- Здесь будут отображаться проекты -->
+        </tbody>
+    </table>
+
+    <!-- Форма для создания проекта (скрыта по умолчанию) -->
+    <div id="createProjectForm" style="display: none;">
+        <h2>Добавить проект</h2>
+        <form onsubmit="createProject(); return false;">
+            <label for="projectName">Название проекта:</label>
+            <input type="text" id="projectName" required>
+
+            <label for="customerCompany">Заказчик:</label>
+            <input type="text" id="customerCompany" required>
+
+            <label for="executorCompany">Исполнитель:</label>
+            <input type="text" id="executorCompany" required>
+
+            <label for="startDate">Дата начала:</label>
+            <input type="date" id="startDate" required>
+
+            <label for="endDate">Дата окончания:</label>
+            <input type="date" id="endDate" required>
+
+            <label for="priority">Приоритет (1-5):</label>
+            <input type="number" id="priority" required min="1" max="5">
+
+            <button type="submit">Создать</button>
+        </form>
+    </div>
+
+    <script>
+        // Ваши скрипты здесь
+
+        function openCreateProjectForm() {
+            document.getElementById("createProjectForm").style.display = "block";
+        }
+
+        function createProject() {
+            updateProjectsList();
+            document.getElementById("createProjectForm").style.display = "none";
+        }
+
+        function updateProjectsList() {
+            const projectsList = document.getElementById("projectsList");
+            projectsList.innerHTML = "";
+
+            fetch("/api/Project")
+                .then(response => response.json())
+                .then(projects => {
+                    projects.forEach(project => {
+                        const projectRow = document.createElement("tr");
+                        projectRow.innerHTML = `
+                                <td>${project.projectName}</td>
+                                <td>${project.customerCompany}</td>
+                                <td>${project.executorCompany}</td>
+                                <td>${project.startDate}</td>
+                                <td>${project.endDate}</td>
+                                <td>${project.priority}</td>
+                                <td>
+                                    <button onclick="viewProjectDetails(${project.projectId})">Детали</button>
+                                    <button onclick="editProject(${project.projectId})">Изменить</button>
+                                    <button onclick="deleteProject(${project.projectId})">Удалить</button>
+                                </td>
+                            `;
+                        projectsList.appendChild(projectRow);
+                    });
+                });
+        }
+
+        function viewProjectDetails(projectId) {
+            window.location.href = `/details.html?id=${projectId}`;
+        }
+
+        function editProject(projectId) {
+            alert("Редактирование проекта: " + projectId);
+        }
+
+        function deleteProject(projectId) {
+            alert("Удаление проекта: " + projectId);
+            updateProjectsList();
+        }
+
+        window.onload = updateProjectsList;
+    </script>
+</body>
+</html>

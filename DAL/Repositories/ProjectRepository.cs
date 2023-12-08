@@ -36,6 +36,7 @@ namespace DAL.Repositories
             await _context.SaveChangesAsync();
         }
 
+
         public async Task DeleteProjectAsync(int projectId)
         {
             var project = await _context.Projects.FindAsync(projectId);

@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Details</title>
+</head>
+<body>
+    <h1>Детали проекта</h1>
+
+    <!-- Здесь будут отображаться детали проекта -->
+    <div id="projectDetails">
+        <!-- Информация о проекте будет добавлена с помощью JavaScript -->
+    </div>
+
+    <h2>Сотрудники проекта</h2>
+
+    <!-- Здесь будут отображаться сотрудники проекта -->
+    <ul id="projectEmployees">
+        <!-- Информация о сотрудниках будет добавлена с помощью JavaScript -->
+    </ul>
+
+    <script>
+        // Ваши скрипты здесь
+
+        // Получаем id проекта из URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectId = urlParams.get('id');
+
+        // Запрашиваем информацию о проекте
+        fetch(`/api/Project/${projectId}`)
+            .then(response => response.json())
+            .then(project => {
+                const projectDetails = document.getElementById("projectDetails");
+                projectDetails.innerHTML = `
+                        <p><strong>Название проекта:</strong> ${project.projectName}</p>
+                        <p><strong>Заказчик:</strong> ${project.customerCompany}</p>
+                        <p><strong>Исполнитель:</strong> ${project.executorCompany}</p>
+                        <p><strong>Дата начала:</strong> ${project.startDate}</p>
+                        <p><strong>Дата окончания:</strong> ${project.endDate}</p>
+                        <p><strong>Приоритет:</strong> ${project.priority}</p>
+                    `;
+            });
+
+        // Запрашиваем информацию о сотрудниках проекта
+        fetch(`/api/Project/${projectId}/employees`)
+            .then(response => response.json())
+            .then(employees => {
+                const projectEmployees = document.getElementById("projectEmployees");
+                employees.forEach(employee => {
+                    const listItem = document.createElement("li");
+                    listItem.textContent = `${employee.firstName} ${employee.lastName} ${employee.email}`;
+                    projectEmployees.appendChild(listItem);
+                });
+            });
+    </script>
+</body>
+</html>

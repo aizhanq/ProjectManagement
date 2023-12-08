@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание проекта</title>
+</head>
+<body>
+    <h1>Создание проекта</h1>
+
+    <!-- Форма для создания проекта -->
+    <form id="createProjectForm">
+        <label for="projectName">Название проекта:</label>
+        <input type="text" id="projectName" name="projectName" required>
+
+        <label for="customerCompany">Заказчик:</label>
+        <input type="text" id="customerCompany" name="customerCompany" required>
+
+        <label for="executorCompany">Исполнитель:</label>
+        <input type="text" id="executorCompany" name="executorCompany" required>
+
+        <label for="startDate">Дата начала:</label>
+        <input type="date" id="startDate" name="startDate" required>
+
+        <label for="endDate">Дата окончания:</label>
+        <input type="date" id="endDate" name="endDate" required>
+
+        <label for="priority">Приоритет (от 1 до 5):</label>
+        <input type="number" id="priority" name="priority" min="1" max="5" required>
+
+        <!-- Здесь можно добавить другие поля формы, связанные с проектом -->
+
+        <button type="button" onclick="createProject()">Создать проект</button>
+    </form>
+
+    <script>
+        // Функция для отправки данных на сервер и создания проекта
+        function createProject() {
+            // Получаем данные из формы
+            var projectName = document.getElementById('projectName').value;
+            var customerCompany = document.getElementById('customerCompany').value;
+            var executorCompany = document.getElementById('executorCompany').value;
+            var startDate = document.getElementById('startDate').value;
+            var endDate = document.getElementById('endDate').value;
+            var priority = document.getElementById('priority').value;
+
+            // Здесь можно выполнить запрос на сервер для создания проекта
+            // Пример использования fetch:
+            fetch('/api/projects', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    projectName: projectName,
+                    customerCompany: customerCompany,
+                    executorCompany: executorCompany,
+                    startDate: startDate,
+                    endDate: endDate,
+                    priority: priority
+                    // Добавьте другие поля, если необходимо
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Обработка ответа от сервера (можно добавить редирект или обновление страницы)
+                console.log('Создан проект:', data);
+                alert('Проект успешно создан');
+            })
+            .catch((error) => {
+                console.error('Ошибка при создании проекта:', error);
+                alert('Ошибка при создании проекта');
+            });
+        }
+    </script>
+</body>
+</html>

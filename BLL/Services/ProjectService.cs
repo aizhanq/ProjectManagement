@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BLL.DTO;
+using BLL.Infrastructure;
 using BLL.Interfaces;
 using DAL.Entities;
 using DAL.Interfaces;
@@ -37,9 +38,21 @@ namespace BLL.Services
 
         public async Task UpdateProjectAsync(ProjectDTO projectDTO)
         {
-            var project = _mapper.Map<Project>(projectDTO);
-            await _unitOfWork.Projects.UpdateProjectAsync(project);
+            var existingProject = await _unitOfWork.Projects.GetProjectByIdAsync(projectDTO.ProjectId);
+
+            if (existingProject == null)
+            {
+                // Обработка ситуации, если проект с указанным ID не найден
+                throw new ValidationException("Проект не найден", nameof(projectDTO.ProjectId));
+            }
+
+            // Используйте AutoMapper для копирования значений из projectDTO в existingProject
+            _mapper.Map(projectDTO, existingProject);
+
+            await _unitOfWork.Projects.UpdateProjectAsync(existingProject);
         }
+
+
 
         public async Task DeleteProjectAsync(int projectId)
         {

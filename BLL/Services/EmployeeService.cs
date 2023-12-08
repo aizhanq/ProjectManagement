@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BLL.DTO;
+using BLL.Infrastructure;
 using BLL.Interfaces;
 using DAL.Entities;
 using DAL.Interfaces;
@@ -37,9 +38,20 @@ namespace BLL.Services
 
         public async Task UpdateEmployeeAsync(EmployeeDTO employeeDTO)
         {
-            var employee = _mapper.Map<Employee>(employeeDTO);
-            await _unitOfWork.Employees.UpdateEmployeeAsync(employee);
+            var existingEmployee = await _unitOfWork.Employees.GetEmployeeByIdAsync(employeeDTO.EmployeeId);
+
+            if (existingEmployee == null)
+            {
+                // Обработка ситуации, если сотрудник с указанным ID не найден
+                throw new ValidationException("Сотрудник не найден", nameof(employeeDTO.EmployeeId));
+            }
+
+            // Используйте AutoMapper для копирования значений из employeeDTO в existingEmployee
+            _mapper.Map(employeeDTO, existingEmployee);
+
+            await _unitOfWork.Employees.UpdateEmployeeAsync(existingEmployee);
         }
+
 
         public async Task DeleteEmployeeAsync(int employeeId)
         {
