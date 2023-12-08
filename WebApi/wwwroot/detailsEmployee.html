@@ -9,112 +9,114 @@
 
 </head>
 <body>
-    <h1>Детали сотрудника</h1>
+    <div class="container">
+        <h1>Детали сотрудника</h1>
 
-    <!-- Кнопка для перехода на страницу редактирования сотрудника -->
-    <button onclick="goToEditEmployee()">Редактировать сотрудника</button>
+        <!-- Кнопка для перехода на страницу редактирования сотрудника -->
+        <button onclick="goToEditEmployee()">Редактировать сотрудника</button>
 
-    <div id="employeeDetails"></div>
+        <div id="employeeDetails"></div>
 
-    <h2>Проекты, в которых участвует сотрудник</h2>
-    <ul id="employeeProjects"></ul>
+        <h2>Проекты, в которых участвует сотрудник</h2>
+        <ul id="employeeProjects"></ul>
 
-    <h2>Добавить проект сотруднику</h2>
-    <select id="projectDropdown"></select>
-    <button onclick="handleAddProject()">Добавить проект</button>
+        <h2>Добавить проект сотруднику</h2>
+        <select id="projectDropdown"></select>
+        <button onclick="handleAddProject()">Добавить проект</button>
 
-    <h2>Проекты, которыми управляет сотрудник</h2>
-    <ul id="managerProjects"></ul>
+        <h2>Проекты, которыми управляет сотрудник</h2>
+        <ul id="managerProjects"></ul>
 
-    <script>
+        <script>
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const employeeId = urlParams.get('id');
+            const urlParams = new URLSearchParams(window.location.search);
+            const employeeId = urlParams.get('id');
 
-        const formatDateTime = (dateTimeString) => {
-            const options = {
-                day: 'numeric',
-                month: 'numeric',
-                year: 'numeric'
+            const formatDateTime = (dateTimeString) => {
+                const options = {
+                    day: 'numeric',
+                    month: 'numeric',
+                    year: 'numeric'
+                };
+                return new Date(dateTimeString).toLocaleDateString('en-US', options);
             };
-            return new Date(dateTimeString).toLocaleDateString('en-US', options);
-        };
 
-        const updateDetails = () => {
-            fetch(`/api/Employee/${employeeId}`)
-                .then(response => response.json())
-                .then(employee => {
-                    const employeeDetails = document.getElementById("employeeDetails");
-                    employeeDetails.innerHTML = `
-                                            <p><strong>Имя:</strong> ${employee.firstName}</p>
-                                            <p><strong>Фамилия:</strong> ${employee.lastName}</p>
-                                            <p><strong>Отчество:</strong> ${employee.middleName || '-'}</p>
-                                            <p><strong>Email:</strong> ${employee.email}</p>
-                                        `;
-                });
+            const updateDetails = () => {
+                fetch(`/api/Employee/${employeeId}`)
+                    .then(response => response.json())
+                    .then(employee => {
+                        const employeeDetails = document.getElementById("employeeDetails");
+                        employeeDetails.innerHTML = `
+                                                            <p><strong>Имя:</strong> ${employee.firstName}</p>
+                                                            <p><strong>Фамилия:</strong> ${employee.lastName}</p>
+                                                            <p><strong>Отчество:</strong> ${employee.middleName || '-'}</p>
+                                                            <p><strong>Email:</strong> ${employee.email}</p>
+                                                        `;
+                    });
 
-            updateProjectsList();
-            updateManagerProjectsList();
-            updateProjectDropdown();
-        };
+                updateProjectsList();
+                updateManagerProjectsList();
+                updateProjectDropdown();
+            };
 
-        const handleDeleteProject = (projectId) => {
-            fetch(`/api/Employee/${employeeId}/projects/${projectId}`, { method: 'DELETE' })
-                .then(response => response.ok && updateProjectsList())
-                .catch(error => console.error('Error:', error));
-        };
-
-        const handleAddProject = () => {
-            const projectDropdown = document.getElementById("projectDropdown");
-            const selectedProjectId = projectDropdown.value;
-
-            if (selectedProjectId) {
-                fetch(`/api/Employee/${employeeId}/projects/${selectedProjectId}`, { method: 'POST' })
+            const handleDeleteProject = (projectId) => {
+                fetch(`/api/Employee/${employeeId}/projects/${projectId}`, { method: 'DELETE' })
                     .then(response => response.ok && updateProjectsList())
                     .catch(error => console.error('Error:', error));
-            }
-        };
+            };
 
-        const updateProjectsList = () => {
-            fetch(`/api/Employee/${employeeId}/projects`)
-                .then(response => response.json())
-                .then(projects => {
-                    const employeeProjects = document.getElementById("employeeProjects");
-                    employeeProjects.innerHTML = projects.map(project => `
-                                            <li>${project.projectName}
-                                                <button onclick="handleDeleteProject(${project.projectId})">Удалить</button>
-                                            </li>`).join('');
-                });
-        };
+            const handleAddProject = () => {
+                const projectDropdown = document.getElementById("projectDropdown");
+                const selectedProjectId = projectDropdown.value;
 
-        const updateManagerProjectsList = () => {
-            fetch(`/api/Project`)
-                .then(response => response.json())
-                .then(projects => {
-                    const managerProjects = document.getElementById("managerProjects");
-                    managerProjects.innerHTML = projects
-                        .filter(project => project.managerId === parseInt(employeeId))
-                        .map(project => `<li>${project.projectName}</li>`)
-                        .join('');
-                });
-        };
+                if (selectedProjectId) {
+                    fetch(`/api/Employee/${employeeId}/projects/${selectedProjectId}`, { method: 'POST' })
+                        .then(response => response.ok && updateProjectsList())
+                        .catch(error => console.error('Error:', error));
+                }
+            };
 
-        const updateProjectDropdown = () => {
-            fetch(`/api/Project`)
-                .then(response => response.json())
-                .then(projects => {
-                    const projectDropdown = document.getElementById("projectDropdown");
-                    projectDropdown.innerHTML = projects.map(project => `
-                                            <option value="${project.projectId}">${project.projectName}</option>`).join('');
-                });
-        };
+            const updateProjectsList = () => {
+                fetch(`/api/Employee/${employeeId}/projects`)
+                    .then(response => response.json())
+                    .then(projects => {
+                        const employeeProjects = document.getElementById("employeeProjects");
+                        employeeProjects.innerHTML = projects.map(project => `
+                                                            <li>${project.projectName}
+                                                                <button onclick="handleDeleteProject(${project.projectId})">Удалить</button>
+                                                            </li>`).join('');
+                    });
+            };
 
-        // Добавлена функция для перехода на страницу редактирования сотрудника
-        const goToEditEmployee = () => {
-            window.location.href = `/editEmployee.html?id=${employeeId}`;
-        };
+            const updateManagerProjectsList = () => {
+                fetch(`/api/Project`)
+                    .then(response => response.json())
+                    .then(projects => {
+                        const managerProjects = document.getElementById("managerProjects");
+                        managerProjects.innerHTML = projects
+                            .filter(project => project.managerId === parseInt(employeeId))
+                            .map(project => `<li>${project.projectName}</li>`)
+                            .join('');
+                    });
+            };
 
-        window.onload = updateDetails;
-    </script>
+            const updateProjectDropdown = () => {
+                fetch(`/api/Project`)
+                    .then(response => response.json())
+                    .then(projects => {
+                        const projectDropdown = document.getElementById("projectDropdown");
+                        projectDropdown.innerHTML = projects.map(project => `
+                                                            <option value="${project.projectId}">${project.projectName}</option>`).join('');
+                    });
+            };
+
+            // Добавлена функция для перехода на страницу редактирования сотрудника
+            const goToEditEmployee = () => {
+                window.location.href = `/editEmployee.html?id=${employeeId}`;
+            };
+
+            window.onload = updateDetails;
+        </script>
+    </div>
 </body>
 </html>

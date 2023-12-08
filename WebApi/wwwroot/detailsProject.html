@@ -8,107 +8,109 @@
     <link rel="stylesheet" type="text/css" href="css/styles.css">
 </head>
 <body>
-    <h1>Детали проекта</h1>
+    <div class="container">
+        <h1>Детали проекта</h1>
 
-    <!-- Кнопка для перехода на страницу редактирования проекта -->
-    <button onclick="goToEditProject()">Редактировать проект</button>
+        <!-- Кнопка для перехода на страницу редактирования проекта -->
+        <button onclick="goToEditProject()">Редактировать проект</button>
 
-    <div id="projectDetails"></div>
-    <h2>Сотрудники проекта</h2>
-    <ul id="projectEmployees"></ul>
+        <div id="projectDetails"></div>
+        <h2>Сотрудники проекта</h2>
+        <ul id="projectEmployees"></ul>
 
-    <h2>Добавить сотрудника в проект</h2>
-    <select id="employeeDropdown"></select>
-    <button onclick="handleAddEmployee()">Добавить в проект</button>
+        <h2>Добавить сотрудника в проект</h2>
+        <select id="employeeDropdown"></select>
+        <button onclick="handleAddEmployee()">Добавить в проект</button>
 
-    <script>
+        <script>
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const projectId = urlParams.get('id');
+            const urlParams = new URLSearchParams(window.location.search);
+            const projectId = urlParams.get('id');
 
-        const formatDateTime = (dateTimeString) => {
-            const options = {
-                day: 'numeric',
-                month: 'numeric',
-                year: 'numeric'
+            const formatDateTime = (dateTimeString) => {
+                const options = {
+                    day: 'numeric',
+                    month: 'numeric',
+                    year: 'numeric'
+                };
+                return new Date(dateTimeString).toLocaleDateString('en-US', options);
             };
-            return new Date(dateTimeString).toLocaleDateString('en-US', options);
-        };
 
 
-        const handleDeleteEmployee = (employeeId) => {
-            fetch(`/api/Project/${projectId}/employees/${employeeId}`, { method: 'DELETE' })
-                .then(response => response.ok && updateEmployeesList())
-                .catch(error => console.error('Error:', error));
-        };
-
-        const handleAddEmployee = () => {
-            const employeeDropdown = document.getElementById("employeeDropdown");
-            const selectedEmployeeId = employeeDropdown.value;
-
-            if (selectedEmployeeId) {
-                fetch(`/api/Project/${projectId}/employees/${selectedEmployeeId}`, { method: 'POST' })
+            const handleDeleteEmployee = (employeeId) => {
+                fetch(`/api/Project/${projectId}/employees/${employeeId}`, { method: 'DELETE' })
                     .then(response => response.ok && updateEmployeesList())
                     .catch(error => console.error('Error:', error));
-            }
-        };
+            };
 
-        const updateDetails = () => {
-            fetch(`/api/Project/${projectId}`)
-                .then(response => response.json())
-                .then(project => {
-                    const projectDetails = document.getElementById("projectDetails");
-                    projectDetails.innerHTML = `
-                                    <p><strong>Название проекта:</strong> ${project.projectName}</p>
-                                    <p><strong>Заказчик:</strong> ${project.customerCompany}</p>
-                                    <p><strong>Исполнитель:</strong> ${project.executorCompany}</p>
-                                    <p><strong>Менеджер:</strong> <span id="managerName"></span></p>
-                                    <p><strong>Дата начала:</strong> ${formatDateTime(project.startDate)}</p>
-                                    <p><strong>Дата окончания:</strong> ${formatDateTime(project.endDate)}</p>
-                                    <p><strong>Приоритет:</strong> ${project.priority}</p>
-                                `;
+            const handleAddEmployee = () => {
+                const employeeDropdown = document.getElementById("employeeDropdown");
+                const selectedEmployeeId = employeeDropdown.value;
 
-                    // Добавлено обновление имени менеджера
-                    const managerNameElement = document.getElementById("managerName");
-                    fetch(`/api/Employee/${project.managerId}`)
-                        .then(response => response.json())
-                        .then(manager => {
-                            managerNameElement.textContent = `${manager.firstName} ${manager.lastName}`;
-                        });
-                });
+                if (selectedEmployeeId) {
+                    fetch(`/api/Project/${projectId}/employees/${selectedEmployeeId}`, { method: 'POST' })
+                        .then(response => response.ok && updateEmployeesList())
+                        .catch(error => console.error('Error:', error));
+                }
+            };
 
-            updateEmployeesList();
-            updateEmployeeDropdown();
-        };
+            const updateDetails = () => {
+                fetch(`/api/Project/${projectId}`)
+                    .then(response => response.json())
+                    .then(project => {
+                        const projectDetails = document.getElementById("projectDetails");
+                        projectDetails.innerHTML = `
+                                                    <p><strong>Название проекта:</strong> ${project.projectName}</p>
+                                                    <p><strong>Заказчик:</strong> ${project.customerCompany}</p>
+                                                    <p><strong>Исполнитель:</strong> ${project.executorCompany}</p>
+                                                    <p><strong>Менеджер:</strong> <span id="managerName"></span></p>
+                                                    <p><strong>Дата начала:</strong> ${formatDateTime(project.startDate)}</p>
+                                                    <p><strong>Дата окончания:</strong> ${formatDateTime(project.endDate)}</p>
+                                                    <p><strong>Приоритет:</strong> ${project.priority}</p>
+                                                `;
 
-        const updateEmployeesList = () => {
-            fetch(`/api/Project/${projectId}/employees`)
-                .then(response => response.json())
-                .then(employees => {
-                    const projectEmployees = document.getElementById("projectEmployees");
-                    projectEmployees.innerHTML = employees.map(employee => `
-                                    <li>${employee.firstName} ${employee.lastName}
-                                        <button onclick="handleDeleteEmployee(${employee.employeeId})">Удалить</button>
-                                    </li>`).join('');
-                });
-        };
+                        // Добавлено обновление имени менеджера
+                        const managerNameElement = document.getElementById("managerName");
+                        fetch(`/api/Employee/${project.managerId}`)
+                            .then(response => response.json())
+                            .then(manager => {
+                                managerNameElement.textContent = `${manager.firstName} ${manager.lastName}`;
+                            });
+                    });
 
-        const updateEmployeeDropdown = () => {
-            fetch(`/api/Employee`)
-                .then(response => response.json())
-                .then(employees => {
-                    const employeeDropdown = document.getElementById("employeeDropdown");
-                    employeeDropdown.innerHTML = employees.map(employee => `
-                                    <option value="${employee.employeeId}">${employee.firstName} ${employee.lastName}</option>`).join('');
-                });
-        };
+                updateEmployeesList();
+                updateEmployeeDropdown();
+            };
 
-        // Добавлена функция для перехода на страницу редактирования проекта
-        const goToEditProject = () => {
-            window.location.href = `/editProject.html?id=${projectId}`;
-        };
+            const updateEmployeesList = () => {
+                fetch(`/api/Project/${projectId}/employees`)
+                    .then(response => response.json())
+                    .then(employees => {
+                        const projectEmployees = document.getElementById("projectEmployees");
+                        projectEmployees.innerHTML = employees.map(employee => `
+                                                    <li>${employee.firstName} ${employee.lastName}
+                                                        <button onclick="handleDeleteEmployee(${employee.employeeId})">Удалить</button>
+                                                    </li>`).join('');
+                    });
+            };
 
-        window.onload = updateDetails;
-    </script>
+            const updateEmployeeDropdown = () => {
+                fetch(`/api/Employee`)
+                    .then(response => response.json())
+                    .then(employees => {
+                        const employeeDropdown = document.getElementById("employeeDropdown");
+                        employeeDropdown.innerHTML = employees.map(employee => `
+                                                    <option value="${employee.employeeId}">${employee.firstName} ${employee.lastName}</option>`).join('');
+                    });
+            };
+
+            // Добавлена функция для перехода на страницу редактирования проекта
+            const goToEditProject = () => {
+                window.location.href = `/editProject.html?id=${projectId}`;
+            };
+
+            window.onload = updateDetails;
+        </script>
+    </div>
 </body>
 </html>
