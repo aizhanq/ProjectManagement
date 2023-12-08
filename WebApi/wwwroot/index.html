@@ -83,6 +83,26 @@
         </tbody>
     </table>
 
+    <!-- Добавлен блок для списка сотрудников -->
+    <h1>Сотрудники</h1>
+
+    <!-- Кнопка для добавления сотрудника -->
+    <button onclick="window.location.href='/addEmployee.html'">Добавить сотрудника</button>
+
+    <!-- Таблица сотрудников -->
+    <table>
+        <thead>
+            <tr>
+                <th>ФИО</th>
+                <th>Email</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody id="employeesList">
+            <!-- Здесь будут отображаться сотрудники -->
+        </tbody>
+    </table>
+
     <script>
         // Ваши скрипты здесь
 
@@ -117,18 +137,18 @@
                     projects.forEach(project => {
                         const projectRow = document.createElement("tr");
                         projectRow.innerHTML = `
-                                    <td>${project.projectName}</td>
-                                    <td>${project.customerCompany}</td>
-                                    <td>${project.executorCompany}</td>
-                                    <td>${formatDate(project.startDate)}</td>
-                                    <td>${formatDate(project.endDate)}</td>
-                                    <td>${project.priority}</td>
-                                    <td>
-                                        <button onclick="viewProjectDetails(${project.projectId})">Детали</button>
-                                        <button onclick="editProject(${project.projectId})">Редактировать</button>
-                                        <button onclick="deleteProject(${project.projectId})">Удалить</button>
-                                    </td>
-                                `;
+                                                <td>${project.projectName}</td>
+                                                <td>${project.customerCompany}</td>
+                                                <td>${project.executorCompany}</td>
+                                                <td>${formatDate(project.startDate)}</td>
+                                                <td>${formatDate(project.endDate)}</td>
+                                                <td>${project.priority}</td>
+                                                <td>
+                                                    <button onclick="viewProjectDetails(${project.projectId})">Детали</button>
+                                                    <button onclick="editProject(${project.projectId})">Редактировать</button>
+                                                    <button onclick="deleteProject(${project.projectId})">Удалить</button>
+                                                </td>
+                                            `;
                         projectsList.appendChild(projectRow);
                     });
                 });
@@ -158,6 +178,55 @@
                 .catch(error => console.error('Error:', error));
         }
 
+        function updateEmployeesList() {
+            const employeesList = document.getElementById("employeesList");
+            employeesList.innerHTML = "";
+
+            fetch("/api/Employee")
+                .then(response => response.json())
+                .then(employees => {
+                    employees.forEach(employee => {
+                        const employeeRow = document.createElement("tr");
+                        employeeRow.innerHTML = `
+                                    <td>${employee.firstName} ${employee.lastName}</td>
+                                    <td>${employee.email}</td>
+                                    <td>
+                                        <button onclick="viewEmployeeDetails(${employee.employeeId})">Детали</button>
+                                        <button onclick="editEmployee(${employee.employeeId})">Редактировать</button>
+                                        <button onclick="deleteEmployee(${employee.employeeId})">Удалить</button>
+                                    </td>
+                                `;
+                        employeesList.appendChild(employeeRow);
+                    });
+                });
+        }
+
+        function viewEmployeeDetails(employeeId) {
+            // Реализуйте переход к деталям сотрудника, аналогично странице проекта
+            // window.location.href = `/detailsEmployee.html?id=${employeeId}`;
+        }
+
+        function editEmployee(employeeId) {
+            // Реализуйте переход к редактированию сотрудника, аналогично странице редактирования проекта
+            // window.location.href = `/editEmployee.html?id=${employeeId}`;
+        }
+
+        function deleteEmployee(employeeId) {
+            fetch(`/api/Employee/${employeeId}`, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(() => {
+                    updateEmployeesList();
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
         // Функция сортировки таблицы по столбцу
         function sortTable(columnIndex) {
             const table = document.querySelector('table');
@@ -183,6 +252,7 @@
         window.onload = function () {
             updateProjectsList();
             loadManagers();
+            updateEmployeesList();
         };
     </script>
 </body>
