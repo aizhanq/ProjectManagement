@@ -94,8 +94,13 @@
                     document.getElementById("projectName").value = project.projectName;
                     document.getElementById("customerCompany").value = project.customerCompany;
                     document.getElementById("executorCompany").value = project.executorCompany;
-                    document.getElementById("startDate").value = project.startDate;
-                    document.getElementById("endDate").value = project.endDate;
+                    // Установка дат с явным указанием UTC
+                    const startDate = new Date(project.startDate);
+                    startDate.setMinutes(startDate.getMinutes() - startDate.getTimezoneOffset());
+                    document.getElementById("startDate").valueAsDate = startDate;
+                    const endDate = new Date(project.endDate);
+                    endDate.setMinutes(endDate.getMinutes() - endDate.getTimezoneOffset());
+                    document.getElementById("endDate").valueAsDate = endDate;
                     document.getElementById("priority").value = project.priority;
                     document.getElementById("manager").value = project.managerId;
                 });

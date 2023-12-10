@@ -66,6 +66,19 @@
     <!-- Кнопка для добавления проекта -->
     <button onclick="window.location.href='/addProject.html'">Добавить проект</button>
 
+    <!-- Фильтры -->
+    <label for="startDateFromFilter">Дата начала с:</label>
+    <input type="date" id="startDateFromFilter">
+
+    <label for="startDateToFilter">по:</label>
+    <input type="date" id="startDateToFilter">
+
+    <label for="priorityFilter">Приоритет от:</label>
+    <input type="number" id="priorityFilter" min="1" max="5">
+
+    <button onclick="applyFilters()">Применить фильтры</button>
+
+
     <!-- Таблица проектов -->
     <table>
         <thead>
@@ -123,10 +136,14 @@
         }
 
         function formatDate(dateString) {
-            const options = { day: 'numeric', month: 'numeric', year: 'numeric' };
-            const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
-            return formattedDate;
+            const date = new Date(dateString);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0'); // добавляем 1, так как месяцы в JavaScript считаются с 0
+            const year = date.getFullYear();
+            return `${day}.${month}.${year}`;
         }
+
+
 
         function updateProjectsList() {
             const projectsList = document.getElementById("projectsList");
@@ -138,18 +155,18 @@
                     projects.forEach(project => {
                         const projectRow = document.createElement("tr");
                         projectRow.innerHTML = `
-                                                    <td>${project.projectName}</td>
-                                                    <td>${project.customerCompany}</td>
-                                                    <td>${project.executorCompany}</td>
-                                                    <td>${formatDate(project.startDate)}</td>
-                                                    <td>${formatDate(project.endDate)}</td>
-                                                    <td>${project.priority}</td>
-                                                    <td>
-                                                        <button onclick="viewProjectDetails(${project.projectId})">Детали</button>
-                                                        <button onclick="editProject(${project.projectId})">Редактировать</button>
-                                                        <button onclick="deleteProject(${project.projectId})">Удалить</button>
-                                                    </td>
-                                                `;
+                                                            <td>${project.projectName}</td>
+                                                            <td>${project.customerCompany}</td>
+                                                            <td>${project.executorCompany}</td>
+                                                            <td>${formatDate(project.startDate)}</td>
+                                                            <td>${formatDate(project.endDate)}</td>
+                                                            <td>${project.priority}</td>
+                                                            <td>
+                                                                <button onclick="viewProjectDetails(${project.projectId})">Детали</button>
+                                                                <button onclick="editProject(${project.projectId})">Редактировать</button>
+                                                                <button onclick="deleteProject(${project.projectId})">Удалить</button>
+                                                            </td>
+                                                        `;
                         projectsList.appendChild(projectRow);
                     });
                 });
@@ -193,14 +210,14 @@
                     employees.forEach(employee => {
                         const employeeRow = document.createElement("tr");
                         employeeRow.innerHTML = `
-                                        <td>${employee.firstName} ${employee.lastName}</td>
-                                        <td>${employee.email}</td>
-                                        <td>
-                                            <button onclick="viewEmployeeDetails(${employee.employeeId})">Детали</button>
-                                            <button onclick="editEmployee(${employee.employeeId})">Редактировать</button>
-                                            <button onclick="deleteEmployee(${employee.employeeId})">Удалить</button>
-                                        </td>
-                                    `;
+                                                <td>${employee.firstName} ${employee.lastName}</td>
+                                                <td>${employee.email}</td>
+                                                <td>
+                                                    <button onclick="viewEmployeeDetails(${employee.employeeId})">Детали</button>
+                                                    <button onclick="editEmployee(${employee.employeeId})">Редактировать</button>
+                                                    <button onclick="deleteEmployee(${employee.employeeId})">Удалить</button>
+                                                </td>
+                                            `;
                         employeesList.appendChild(employeeRow);
                     });
                 });
@@ -290,6 +307,68 @@
             // Обновление таблицы с отсортированными строками
             tbody.innerHTML = '';
             sortedRows.forEach(row => tbody.appendChild(row));
+        }
+
+        function applyFilters() {
+            const startDateFromFilter = document.getElementById("startDateFromFilter").value;
+            const startDateToFilter = document.getElementById("startDateToFilter").value;
+            const priorityFilter = document.getElementById("priorityFilter").value;
+
+            const filters = [];
+
+            if (startDateFromFilter || startDateToFilter) {
+                filters.push(project => {
+                    const startDate = new Date(project.startDate);
+                    const startDateFrom = startDateFromFilter ? new Date(startDateFromFilter) : null;
+                    const startDateTo = startDateToFilter ? new Date(startDateToFilter) : null;
+
+                    // Обрезаем время для корректного сравнения
+                    startDate.setHours(0, 0, 0, 0);
+                    if (startDateFrom) startDateFrom.setHours(0, 0, 0, 0);
+                    if (startDateTo) startDateTo.setHours(0, 0, 0, 0);
+
+                    return (
+                        (!startDateFrom || startDate >= startDateFrom) &&
+                        (!startDateTo || startDate <= startDateTo)
+                    );
+                });
+            }
+
+            if (priorityFilter) {
+                filters.push(project => project.priority == priorityFilter);
+            }
+
+            updateProjectsList(filters);
+        }
+
+
+        function updateProjectsList(filters = []) {
+            const projectsList = document.getElementById("projectsList");
+            projectsList.innerHTML = "";
+
+            fetch("/api/Project")
+                .then(response => response.json())
+                .then(projects => {
+                    const filteredProjects = projects.filter(project => filters.every(filter => filter(project)));
+
+                    filteredProjects.forEach(project => {
+                        const projectRow = document.createElement("tr");
+                        projectRow.innerHTML = `
+                                <td>${project.projectName}</td>
+                                <td>${project.customerCompany}</td>
+                                <td>${project.executorCompany}</td>
+                                <td>${formatDate(project.startDate)}</td>
+                                <td>${formatDate(project.endDate)}</td>
+                                <td>${project.priority}</td>
+                                <td>
+                                    <button onclick="viewProjectDetails(${project.projectId})">Детали</button>
+                                    <button onclick="editProject(${project.projectId})">Редактировать</button>
+                                    <button onclick="deleteProject(${project.projectId})">Удалить</button>
+                                </td>
+                            `;
+                        projectsList.appendChild(projectRow);
+                    });
+                });
         }
 
         window.onload = function () {
