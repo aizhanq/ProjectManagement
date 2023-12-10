@@ -59,6 +59,21 @@
                 background-color: #0056b3; /* Изменяем цвет при наведении курсора */
             }
 
+            button.delete-btn {
+                background-color: #dc3545;
+                color: #fff;
+                border: none;
+                padding: 8px 12px;
+                cursor: pointer;
+                border-radius: 5px;
+                text-decoration: none;
+                display: inline-block;
+            }
+
+                button.delete-btn:hover {
+                    background-color: #c82333;
+                }
+
         #filterSection {
             position: absolute;
             top: 1px;
@@ -79,14 +94,14 @@
 
     <div id="filterSection">
         <!-- Фильтры -->
-        <h3>Фильтр</h3>
+        <h3>Фильтр проектов</h3>
         <label for="startDateFromFilter">Дата начала с:</label>
         <input type="date" id="startDateFromFilter">
 
         <label for="startDateToFilter">по:</label>
         <input type="date" id="startDateToFilter">
 
-        <label for="priorityFilter">Приоритет от:</label>
+        <label for="priorityFilter">Приоритет:</label>
         <input type="number" id="priorityFilter" min="1" max="5">
 
         <button onclick="applyFilters()">Применить фильтры</button>
@@ -182,7 +197,7 @@
                                                                                 <td>
                                                                                     <button onclick="viewProjectDetails(${project.projectId})">Детали</button>
                                                                                     <button onclick="editProject(${project.projectId})">Редактировать</button>
-                                                                                    <button onclick="deleteProject(${project.projectId})">Удалить</button>
+                                                                                    <button class="delete-btn" onclick="deleteProject(${project.projectId})">Удалить</button>
                                                                                 </td>
                                                                             `;
                             projectsList.appendChild(projectRow);
@@ -233,7 +248,7 @@
                                                                     <td>
                                                                         <button onclick="viewEmployeeDetails(${employee.employeeId})">Детали</button>
                                                                         <button onclick="editEmployee(${employee.employeeId})">Редактировать</button>
-                                                                        <button onclick="deleteEmployee(${employee.employeeId})">Удалить</button>
+                                                                        <button class="delete-btn" onclick="deleteEmployee(${employee.employeeId})">Удалить</button>
                                                                     </td>
                                                                 `;
                             employeesList.appendChild(employeeRow);
@@ -381,7 +396,7 @@
                                                     <td>
                                                         <button onclick="viewProjectDetails(${project.projectId})">Детали</button>
                                                         <button onclick="editProject(${project.projectId})">Редактировать</button>
-                                                        <button onclick="deleteProject(${project.projectId})">Удалить</button>
+                                                        <button  class="delete-btn" onclick="deleteProject(${project.projectId})">Удалить</button>
                                                     </td>
                                                 `;
                             projectsList.appendChild(projectRow);
