@@ -193,7 +193,7 @@
                             return response.text();
                         })
                         .then(() => {
-                            //Если удаление прошло успешно, обновляем список сотрудников
+                            //Обновляем список сотрудников
                             updateEmployeesList();
                         })
                         .catch(error => console.error('Error:', error));

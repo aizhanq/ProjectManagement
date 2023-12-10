@@ -26,6 +26,8 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
+
 
 var app = builder.Build();
 
@@ -51,5 +53,9 @@ app.UseAuthorization();
 
 // Controllers
 app.MapControllers();
+
+using var scope = app.Services.CreateScope();
+var initializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+initializer.Initialize();
 
 app.Run();
