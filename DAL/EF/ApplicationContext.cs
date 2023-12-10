@@ -1,6 +1,4 @@
-﻿// Путь: DAL/EF/ApplicationContext.cs
-
-using DAL.Entities;
+﻿using DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.EF
@@ -30,22 +28,20 @@ namespace DAL.EF
 
             modelBuilder.Entity<EmployeeProject>()
                 .HasOne(ep => ep.Project)
-                .WithMany() // Изменено здесь
+                .WithMany() 
                 .HasForeignKey(ep => ep.ProjectId);
-
-            // Добавим явное указание отношения между Employee и Projects
+     
             modelBuilder.Entity<Employee>()
                 .HasMany(e => e.Projects)
                 .WithOne(p => p.Manager)
                 .HasForeignKey(p => p.ManagerId)
-                .OnDelete(DeleteBehavior.SetNull); // Если менеджер удаляется, устанавливаем ManagerId в null
+                .OnDelete(DeleteBehavior.SetNull); 
 
             modelBuilder.Entity<Project>()
                 .HasOne(p => p.Manager)
                 .WithMany(e => e.Projects)
                 .HasForeignKey(p => p.ManagerId)
                 .OnDelete(DeleteBehavior.Restrict);
-
         }
     }
 }

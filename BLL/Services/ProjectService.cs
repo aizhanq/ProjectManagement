@@ -46,13 +46,11 @@ namespace BLL.Services
                 throw new ValidationException("Проект не найден", nameof(projectDTO.ProjectId));
             }
 
-            // Используйте AutoMapper для копирования значений из projectDTO в existingProject
+            // AutoMapper для копирования значений из projectDTO в existingProject
             _mapper.Map(projectDTO, existingProject);
 
             await _unitOfWork.Projects.UpdateProjectAsync(existingProject);
         }
-
-
 
         public async Task DeleteProjectAsync(int projectId)
         {

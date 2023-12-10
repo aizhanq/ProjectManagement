@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Детали сотрудника</title>
-    <!-- В head секции HTML-файлов -->
-    <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <link rel="stylesheet" type="text/css" href="css/detailsStyles.css">
 
 </head>
 <body>
@@ -28,7 +27,6 @@
         <ul id="managerProjects"></ul>
 
         <script>
-
             const urlParams = new URLSearchParams(window.location.search);
             const employeeId = urlParams.get('id');
 
@@ -110,7 +108,6 @@
                     });
             };
 
-            // Добавлена функция для перехода на страницу редактирования сотрудника
             const goToEditEmployee = () => {
                 window.location.href = `/editEmployee.html?id=${employeeId}`;
             };

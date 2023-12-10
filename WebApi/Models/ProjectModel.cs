@@ -21,7 +21,7 @@ namespace WebApi.Models
 
         public DateTime EndDate { get; set; }
 
-        [Range(1, 5, ErrorMessage = "Priority must be between 1 and 5.")]
+        [Range(1, 5, ErrorMessage = "Приоритет должен быть в диапазоне от 1 до 5")]
         public int Priority { get; set; }
     }
 }

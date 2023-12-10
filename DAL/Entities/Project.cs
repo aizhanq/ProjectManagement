@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations; // Добавляем пространство имен для атрибута Range
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace DAL.Entities
 {
@@ -16,7 +16,6 @@ namespace DAL.Entities
         [Range(1, 5, ErrorMessage = "Приоритет должен быть в диапазоне от 1 до 5")]
         public int Priority { get; set; }
 
-        // Навигационное свойство для связи с сотрудниками проекта
         public virtual ICollection<Employee>? Employees { get; set; } = new List<Employee>();
     }
 }

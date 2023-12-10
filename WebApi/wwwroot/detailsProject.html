@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Детали проекта</title>
-    <!-- В head секции HTML-файлов -->
-    <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <link rel="stylesheet" type="text/css" href="css/detailsStyles.css">
 </head>
 <body>
     <div class="container">
@@ -23,7 +22,6 @@
         <button onclick="handleAddEmployee()">Добавить в проект</button>
 
         <script>
-
             const urlParams = new URLSearchParams(window.location.search);
             const projectId = urlParams.get('id');
 
@@ -36,11 +34,6 @@
                 const [day, month, year] = new Date(dateTimeString).toLocaleDateString('en-US', options).split('/');
                 return `${month}.${day}.${year}`;
             };
-
-
-
-
-
 
             const handleDeleteEmployee = (employeeId) => {
                 fetch(`/api/Project/${projectId}/employees/${employeeId}`, { method: 'DELETE' })
@@ -74,7 +67,6 @@
                                                     <p><strong>Приоритет:</strong> ${project.priority}</p>
                                                 `;
 
-                        // Добавлено обновление имени менеджера
                         const managerNameElement = document.getElementById("managerName");
                         fetch(`/api/Employee/${project.managerId}`)
                             .then(response => response.json())
@@ -109,7 +101,6 @@
                     });
             };
 
-            // Добавлена функция для перехода на страницу редактирования проекта
             const goToEditProject = () => {
                 window.location.href = `/editProject.html?id=${projectId}`;
             };

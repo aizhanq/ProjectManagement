@@ -8,7 +8,7 @@ using WebApi.MappingProfiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Добавление сервисов в контейнер.
 builder.Services.AddControllers();
 
 // Swagger/OpenAPI
@@ -42,7 +42,7 @@ if (app.Environment.IsDevelopment())
 
     app.UseHttpsRedirection();
 
-    // Exception page for development
+    // Страница с отображением исключений
     app.UseDeveloperExceptionPage();
 }
 

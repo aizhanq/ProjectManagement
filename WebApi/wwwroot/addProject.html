@@ -4,39 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Добавить проект</title>
-    <style>
-        /* Ваши стили здесь */
-        form {
-            width: 50%;
-            margin: 50px auto;
-            background-color: #f9f9f9;
-            padding: 20px;
-            border-radius: 5px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        input, select, button {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-
-        button {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="css/formsStyle.css">
 </head>
 <body>
 
@@ -61,15 +29,12 @@
 
         <label for="manager">Менеджер:</label>
         <select id="manager" required>
-            <!-- Опции будут добавлены динамически при загрузке страницы -->
         </select>
 
         <button type="submit">Создать</button>
     </form>
 
     <script>
-        // Ваши скрипты здесь
-
         function createProject() {
             const projectName = document.getElementById("projectName").value;
             const customerCompany = document.getElementById("customerCompany").value;
@@ -108,7 +73,6 @@
                 })
                 .catch(error => console.error('Error:', error));
         }
-
         function loadManagers() {
             const managerDropdown = document.getElementById("manager");
 

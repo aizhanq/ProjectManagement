@@ -1,0 +1,95 @@
+﻿table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+#createProjectForm {
+    display: none;
+    margin-bottom: 20px;
+}
+
+form {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+input, select, button {
+    margin-bottom: 10px;
+}
+
+button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 5px;
+    text-decoration: none; /* Убираем стандартное подчеркивание текста в виде ссылки */
+    display: inline-block; /* Делаем кнопку блочным элементом, чтобы применять стили ширины и высоты */
+}
+
+    button:hover {
+        background-color: #0056b3; /* Изменяем цвет при наведении курсора */
+    }
+
+    button.delete-btn {
+        background-color: #dc3545;
+        color: #fff;
+        border: none;
+        padding: 8px 12px;
+        cursor: pointer;
+        border-radius: 5px;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        button.delete-btn:hover {
+            background-color: #c82333;
+        }
+
+#filterSection {
+    position: absolute;
+    top: 1px;
+    right: 10px;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 165px;
+    margin-bottom: 60px;
+}
+
+#projectsTable {
+    margin-top: 20px; /* Добавляем отступ сверху, чтобы таблица не перекрывала раздел фильтра */
+}
+
+#mainContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+
+#projectsTable {
+    width: 80%; /* Ширина содержимого */
+    max-width: 800px; /* Максимальная ширина */
+}

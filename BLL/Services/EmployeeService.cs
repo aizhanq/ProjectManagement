@@ -46,12 +46,11 @@ namespace BLL.Services
                 throw new ValidationException("Сотрудник не найден", nameof(employeeDTO.EmployeeId));
             }
 
-            // Используйте AutoMapper для копирования значений из employeeDTO в existingEmployee
+            // AutoMapper для копирования значений из employeeDTO в existingEmployee
             _mapper.Map(employeeDTO, existingEmployee);
 
             await _unitOfWork.Employees.UpdateEmployeeAsync(existingEmployee);
         }
-
 
         public async Task DeleteEmployeeAsync(int employeeId)
         {

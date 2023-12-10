@@ -5,108 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Проекты</title>
-    <style>
-        /* Ваши стили здесь */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            cursor: pointer;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        #createProjectForm {
-            display: none;
-            margin-bottom: 20px;
-        }
-
-        form {
-            background-color: #f9f9f9;
-            padding: 10px;
-            border-radius: 5px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        input, select, button {
-            margin-bottom: 10px;
-        }
-
-        button {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 8px 12px;
-            cursor: pointer;
-            border-radius: 5px;
-            text-decoration: none; /* Убираем стандартное подчеркивание текста в виде ссылки */
-            display: inline-block; /* Делаем кнопку блочным элементом, чтобы применять стили ширины и высоты */
-        }
-
-            button:hover {
-                background-color: #0056b3; /* Изменяем цвет при наведении курсора */
-            }
-
-            button.delete-btn {
-                background-color: #dc3545;
-                color: #fff;
-                border: none;
-                padding: 8px 12px;
-                cursor: pointer;
-                border-radius: 5px;
-                text-decoration: none;
-                display: inline-block;
-            }
-
-                button.delete-btn:hover {
-                    background-color: #c82333;
-                }
-
-        #filterSection {
-            position: absolute;
-            top: 1px;
-            right: 10px;
-            background-color: #f9f9f9;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 165px;
-            margin-bottom: 60px;
-        }
-
-        #projectsTable {
-            margin-top: 20px; /* Добавляем отступ сверху, чтобы таблица не перекрывала раздел фильтра */
-        }
-        #mainContent {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        
-        #projectsTable {
-            width: 80%; /* Ширина содержимого */
-            max-width: 800px; /* Максимальная ширина */
-        }
-
-    </style>
+    <link rel="stylesheet" type="text/css" href="css/indexStyles.css">
 </head>
 <body>
-
-
     <div id="filterSection">
         <!-- Фильтры -->
         <h3>Фильтр проектов</h3>
@@ -147,7 +48,6 @@
         </tbody>
         </table>
 
-        <!-- Добавлен блок для списка сотрудников -->
         <h1>Сотрудники</h1>
 
         <!-- Кнопка для добавления сотрудника -->
@@ -168,8 +68,6 @@
         </table>
     </div>
         <script>
-            // Ваши скрипты здесь
-
             function loadManagers() {
                 const managerDropdown = document.getElementById("manager");
 
@@ -192,8 +90,6 @@
                 const year = date.getFullYear();
                 return `${day}.${month}.${year}`;
             }
-
-
 
             function updateProjectsList() {
                 const projectsList = document.getElementById("projectsList");
@@ -231,7 +127,7 @@
             }
 
             function deleteProject(projectId) {
-                // Добавлено подтверждение перед удалением проекта
+                // Подтверждение перед удалением проекта
                 const confirmDelete = confirm("Вы уверены, что хотите удалить проект?");
                 if (confirmDelete) {
                     fetch(`/api/Project/${projectId}`, {
@@ -282,41 +178,36 @@
             }
 
             function deleteEmployee(employeeId) {
-                // Запрашиваем подтверждение перед удалением сотрудника
+                // Подтверждение перед удалением сотрудника
                 const confirmDelete = confirm("Вы уверены, что хотите удалить сотрудника?");
 
                 if (confirmDelete) {
-                    // Пытаемся удалить сотрудника по id
                     fetch(`/api/Employee/${employeeId}`, {
                         method: 'DELETE'
                     })
                         .then(response => {
                             if (!response.ok) {
-                                // Если удаление не удалось (например, сотрудник является менеджером проекта), выводим сообщение
                                 alert("Нельзя удалить сотрудника, так как он является менеджером проекта.");
                                 throw new Error(`HTTP error! Status: ${response.status}`);
                             }
                             return response.text();
                         })
                         .then(() => {
-                            // Если удаление прошло успешно, обновляем список сотрудников
+                            //Если удаление прошло успешно, обновляем список сотрудников
                             updateEmployeesList();
                         })
                         .catch(error => console.error('Error:', error));
                 }
             }
 
-
-            // Функция сортировки таблицы по столбцу
+            // Функция сортировки таблицы проектов по столбцу
             function sortTable(columnIndex) {
                 const table = document.querySelector('table');
                 const tbody = table.querySelector('tbody');
                 const rows = Array.from(tbody.querySelectorAll('tr'));
 
-                // Определение направления сортировки (по возрастанию или убыванию)
                 const asc = table.classList.toggle('asc');
 
-                // Сортировка строк
                 const sortedRows = rows.sort((a, b) => {
                     const aValue = a.children[columnIndex].textContent.trim();
                     const bValue = b.children[columnIndex].textContent.trim();
@@ -324,21 +215,18 @@
                     return asc ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
                 });
 
-                // Обновление таблицы с отсортированными строками
                 tbody.innerHTML = '';
                 sortedRows.forEach(row => tbody.appendChild(row));
             }
 
             // Функция сортировки таблицы сотрудников по столбцу
             function sortTableEmployees(columnIndex) {
-                const table = document.querySelectorAll('table')[1]; // Используем вторую таблицу (индекс 1) на странице
+                const table = document.querySelectorAll('table')[1];
                 const tbody = table.querySelector('tbody');
                 const rows = Array.from(tbody.querySelectorAll('tr'));
 
-                // Определение направления сортировки (по возрастанию или убыванию)
                 const asc = table.classList.toggle('asc');
 
-                // Сортировка строк
                 const sortedRows = rows.sort((a, b) => {
                     const aValue = a.children[columnIndex].textContent.trim();
                     const bValue = b.children[columnIndex].textContent.trim();
@@ -346,11 +234,11 @@
                     return asc ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
                 });
 
-                // Обновление таблицы с отсортированными строками
                 tbody.innerHTML = '';
                 sortedRows.forEach(row => tbody.appendChild(row));
             }
 
+            // Функция для фильтрации
             function applyFilters() {
                 const startDateFromFilter = document.getElementById("startDateFromFilter").value;
                 const startDateToFilter = document.getElementById("startDateToFilter").value;
@@ -363,8 +251,7 @@
                         const startDate = new Date(project.startDate);
                         const startDateFrom = startDateFromFilter ? new Date(startDateFromFilter) : null;
                         const startDateTo = startDateToFilter ? new Date(startDateToFilter) : null;
-
-                        // Обрезаем время для корректного сравнения
+                       
                         startDate.setHours(0, 0, 0, 0);
                         if (startDateFrom) startDateFrom.setHours(0, 0, 0, 0);
                         if (startDateTo) startDateTo.setHours(0, 0, 0, 0);
@@ -382,7 +269,6 @@
 
                 updateProjectsList(filters);
             }
-
 
             function updateProjectsList(filters = []) {
                 const projectsList = document.getElementById("projectsList");
