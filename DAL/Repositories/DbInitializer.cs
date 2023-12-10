@@ -24,10 +24,13 @@ namespace DAL.Repositories
             
             var employees = new[]
                         {
+                        new Employee { FirstName = "Бегимай", LastName = "Калысбекова", MiddleName = "Эмильевна", Email = "kbegimay@gmail.com" },
                         new Employee { FirstName = "Ринат", LastName = "Исаков", MiddleName = "Алмазович", Email = "isakov93@gmail.com" },
-                        new Employee { FirstName = "Алина", LastName = "Жумалиева", MiddleName = "Мунарбековна", Email = "@jumalina@gmail.com" },
-                        new Employee { FirstName = "Евгений", LastName = "Власов", MiddleName = "Дмитриевич", Email = "eugene9999@gmail.com" },
-                        new Employee { FirstName = "Дарика", LastName = "Алымкулова", MiddleName = "Калисбековна", Email = "@sundara@gmail.com" },
+                        new Employee { FirstName = "Максим", LastName = "Василенко", MiddleName = "Николаевич", Email = "maxvasilenko@gmail.com" },
+                        new Employee { FirstName = "Алина", LastName = "Жумалиева", MiddleName = "Мунарбековна", Email = "jumalina@gmail.com" },
+                        new Employee { FirstName = "Евгений", LastName = "Ковалев", MiddleName = "Дмитриевич", Email = "eugene9999@gmail.com" },
+                        new Employee { FirstName = "Дарика", LastName = "Алымкулова", MiddleName = "Калисбековна", Email = "sundara@gmail.com" }
+
                         };
 
             _context.Employees.AddRange(employees);
@@ -35,17 +38,6 @@ namespace DAL.Repositories
 
             var projects = new[]
                  {
-                     new Project
-                     {
-                         ProjectName = "DeliveryApp",
-                         CustomerCompany = "HealthyFood",
-                         ExecutorCompany = "AppSoft",
-                         ManagerId = employees[0].EmployeeId,
-                         Manager = employees[0],
-                         StartDate = DateTime.Now.AddDays(-10),
-                         EndDate = DateTime.Now.AddDays(20),
-                         Priority = 3
-                     },
                      new Project
                      {
                          ProjectName = "Online Bank",
@@ -57,7 +49,29 @@ namespace DAL.Repositories
                          EndDate = DateTime.Now.AddDays(15),
                          Priority = 2
                      },
-                     
+                     new Project
+                     {
+                         ProjectName = "DeliveryApp",
+                         CustomerCompany = "HealthyFood",
+                         ExecutorCompany = "AppSoft",
+                         ManagerId = employees[2].EmployeeId,
+                         Manager = employees[2],
+                         StartDate = DateTime.Now.AddDays(-10),
+                         EndDate = DateTime.Now.AddDays(20),
+                         Priority = 5
+                     },                   
+                     new Project
+                     {
+                         ProjectName = "AI Closet",
+                         CustomerCompany = "DeFacto",
+                         ExecutorCompany = "AppSoft",
+                         ManagerId = employees[4].EmployeeId,
+                         Manager = employees[4],
+                         StartDate = DateTime.Now.AddDays(-23),
+                         EndDate = DateTime.Now.AddDays(13),
+                         Priority = 1
+                     }
+
                  };
 
              _context.Projects.AddRange(projects);
