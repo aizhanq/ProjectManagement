@@ -282,38 +282,30 @@
             }
 
             function deleteEmployee(employeeId) {
-                // Добавлено подтверждение перед удалением сотрудника
+                // Запрашиваем подтверждение перед удалением сотрудника
                 const confirmDelete = confirm("Вы уверены, что хотите удалить сотрудника?");
+
                 if (confirmDelete) {
-                    // Проверяем, является ли сотрудник менеджером проекта
-                    fetch(`/api/Project/manager/${employeeId}`)
+                    // Пытаемся удалить сотрудника по id
+                    fetch(`/api/Employee/${employeeId}`, {
+                        method: 'DELETE'
+                    })
                         .then(response => {
                             if (!response.ok) {
-                                // Если сотрудник менеджер проекта, выводим сообщение и прерываем удаление
+                                // Если удаление не удалось (например, сотрудник является менеджером проекта), выводим сообщение
                                 alert("Нельзя удалить сотрудника, так как он является менеджером проекта.");
                                 throw new Error(`HTTP error! Status: ${response.status}`);
                             }
                             return response.text();
                         })
                         .then(() => {
-                            // Если сотрудник не является менеджером проекта, продолжаем удаление
-                            fetch(`/api/Employee/${employeeId}`, {
-                                method: 'DELETE'
-                            })
-                                .then(response => {
-                                    if (!response.ok) {
-                                        throw new Error(`HTTP error! Status: ${response.status}`);
-                                    }
-                                    return response.text();
-                                })
-                                .then(() => {
-                                    updateEmployeesList();
-                                })
-                                .catch(error => console.error('Error:', error));
+                            // Если удаление прошло успешно, обновляем список сотрудников
+                            updateEmployeesList();
                         })
                         .catch(error => console.error('Error:', error));
                 }
             }
+
 
             // Функция сортировки таблицы по столбцу
             function sortTable(columnIndex) {
