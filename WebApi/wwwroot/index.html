@@ -58,325 +58,342 @@
             button:hover {
                 background-color: #0056b3; /* Изменяем цвет при наведении курсора */
             }
+
+        #filterSection {
+            position: absolute;
+            top: 1px;
+            right: 10px;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 60px;
+        }
+
+        #projectsTable {
+            margin-top: 145px; /* Добавляем отступ сверху, чтобы таблица не перекрывала раздел фильтра */
+        }
     </style>
 </head>
 <body>
-    <h1>Проекты</h1>
-
-    <!-- Кнопка для добавления проекта -->
-    <button onclick="window.location.href='/addProject.html'">Добавить проект</button>
-
-    <!-- Фильтры -->
-    <h2>Фильтр</h2>
-    <label for="startDateFromFilter">Дата начала с:</label>
-    <input type="date" id="startDateFromFilter">
-
-    <label for="startDateToFilter">по:</label>
-    <input type="date" id="startDateToFilter">
-
-    <label for="priorityFilter">Приоритет от:</label>
-    <input type="number" id="priorityFilter" min="1" max="5">
-
-    <button onclick="applyFilters()">Применить фильтры</button>
 
 
-    <!-- Таблица проектов -->
-    <table>
-        <thead>
-            <tr>
-                <th onclick="sortTable(0)">Название проекта</th>
-                <th onclick="sortTable(1)">Заказчик</th>
-                <th onclick="sortTable(2)">Исполнитель</th>
-                <th onclick="sortTable(3)">Дата начала</th>
-                <th onclick="sortTable(4)">Дата окончания</th>
-                <th onclick="sortTable(5)">Приоритет</th>
-                <th>Действия</th>
-            </tr>
-        </thead>
-        <tbody id="projectsList">
-            <!-- Здесь будут отображаться проекты -->
-        </tbody>
-    </table>
+    <div id="filterSection">
+        <!-- Фильтры -->
+        <h3>Фильтр</h3>
+        <label for="startDateFromFilter">Дата начала с:</label>
+        <input type="date" id="startDateFromFilter">
 
-    <!-- Добавлен блок для списка сотрудников -->
-    <h1>Сотрудники</h1>
+        <label for="startDateToFilter">по:</label>
+        <input type="date" id="startDateToFilter">
 
-    <!-- Кнопка для добавления сотрудника -->
-    <button onclick="window.location.href='/addEmployee.html'">Добавить сотрудника</button>
+        <label for="priorityFilter">Приоритет от:</label>
+        <input type="number" id="priorityFilter" min="1" max="5">
 
-    <!-- Таблица сотрудников -->
-    <table>
-        <thead>
-            <tr>
-                <th onclick="sortTableEmployees(0)">ФИО</th>
-                <th onclick="sortTableEmployees(1)">Email</th>
-                <th>Действия</th>
-            </tr>
-        </thead>
-        <tbody id="employeesList">
-            <!-- Здесь будут отображаться сотрудники -->
-        </tbody>
-    </table>
+        <button onclick="applyFilters()">Применить фильтры</button>
+    </div>
+    <div id="projectsTable">
+        <h1>Проекты</h1>
 
-    <script>
-        // Ваши скрипты здесь
+        <!-- Кнопка для добавления проекта -->
+        <button onclick="window.location.href='/addProject.html'">Добавить проект</button>
 
-        function loadManagers() {
-            const managerDropdown = document.getElementById("manager");
+        <!-- Таблица проектов -->
+        <table>
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)">Название проекта</th>
+                    <th onclick="sortTable(1)">Заказчик</th>
+                    <th onclick="sortTable(2)">Исполнитель</th>
+                    <th onclick="sortTable(3)">Дата начала</th>
+                    <th onclick="sortTable(4)">Дата окончания</th>
+                    <th onclick="sortTable(5)">Приоритет</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody id="projectsList">
+                <!-- Здесь будут отображаться проекты -->
+            </tbody>
+        </table>
 
-            fetch("/api/Employee")
-                .then(response => response.json())
-                .then(employees => {
-                    employees.forEach(employee => {
-                        const option = document.createElement("option");
-                        option.value = employee.employeeId;
-                        option.textContent = `${employee.firstName} ${employee.lastName}`;
-                        managerDropdown.appendChild(option);
+        <!-- Добавлен блок для списка сотрудников -->
+        <h1>Сотрудники</h1>
+
+        <!-- Кнопка для добавления сотрудника -->
+        <button onclick="window.location.href='/addEmployee.html'">Добавить сотрудника</button>
+
+        <!-- Таблица сотрудников -->
+        <table>
+            <thead>
+                <tr>
+                    <th onclick="sortTableEmployees(0)">ФИО</th>
+                    <th onclick="sortTableEmployees(1)">Email</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody id="employeesList">
+                <!-- Здесь будут отображаться сотрудники -->
+            </tbody>
+        </table>
+    </div>
+        <script>
+            // Ваши скрипты здесь
+
+            function loadManagers() {
+                const managerDropdown = document.getElementById("manager");
+
+                fetch("/api/Employee")
+                    .then(response => response.json())
+                    .then(employees => {
+                        employees.forEach(employee => {
+                            const option = document.createElement("option");
+                            option.value = employee.employeeId;
+                            option.textContent = `${employee.firstName} ${employee.lastName}`;
+                            managerDropdown.appendChild(option);
+                        });
                     });
-                });
-        }
-
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            const day = date.getDate().toString().padStart(2, '0');
-            const month = (date.getMonth() + 1).toString().padStart(2, '0'); // добавляем 1, так как месяцы в JavaScript считаются с 0
-            const year = date.getFullYear();
-            return `${day}.${month}.${year}`;
-        }
-
-
-
-        function updateProjectsList() {
-            const projectsList = document.getElementById("projectsList");
-            projectsList.innerHTML = "";
-
-            fetch("/api/Project")
-                .then(response => response.json())
-                .then(projects => {
-                    projects.forEach(project => {
-                        const projectRow = document.createElement("tr");
-                        projectRow.innerHTML = `
-                                                            <td>${project.projectName}</td>
-                                                            <td>${project.customerCompany}</td>
-                                                            <td>${project.executorCompany}</td>
-                                                            <td>${formatDate(project.startDate)}</td>
-                                                            <td>${formatDate(project.endDate)}</td>
-                                                            <td>${project.priority}</td>
-                                                            <td>
-                                                                <button onclick="viewProjectDetails(${project.projectId})">Детали</button>
-                                                                <button onclick="editProject(${project.projectId})">Редактировать</button>
-                                                                <button onclick="deleteProject(${project.projectId})">Удалить</button>
-                                                            </td>
-                                                        `;
-                        projectsList.appendChild(projectRow);
-                    });
-                });
-        }
-
-        function viewProjectDetails(projectId) {
-            window.location.href = `/detailsProject.html?id=${projectId}`;
-        }
-
-        function editProject(projectId) {
-            window.location.href = `/editProject.html?id=${projectId}`;
-        }
-
-        function deleteProject(projectId) {
-            // Добавлено подтверждение перед удалением проекта
-            const confirmDelete = confirm("Вы уверены, что хотите удалить проект?");
-            if (confirmDelete) {
-                fetch(`/api/Project/${projectId}`, {
-                    method: 'DELETE'
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! Status: ${response.status}`);
-                        }
-                        return response.text();
-                    })
-                    .then(() => {
-                        updateProjectsList();
-                    })
-                    .catch(error => console.error('Error:', error));
             }
-        }
 
-        function updateEmployeesList() {
-            const employeesList = document.getElementById("employeesList");
-            employeesList.innerHTML = "";
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0'); // добавляем 1, так как месяцы в JavaScript считаются с 0
+                const year = date.getFullYear();
+                return `${day}.${month}.${year}`;
+            }
 
-            fetch("/api/Employee")
-                .then(response => response.json())
-                .then(employees => {
-                    employees.forEach(employee => {
-                        const employeeRow = document.createElement("tr");
-                        employeeRow.innerHTML = `
-                                                <td>${employee.firstName} ${employee.lastName}</td>
-                                                <td>${employee.email}</td>
-                                                <td>
-                                                    <button onclick="viewEmployeeDetails(${employee.employeeId})">Детали</button>
-                                                    <button onclick="editEmployee(${employee.employeeId})">Редактировать</button>
-                                                    <button onclick="deleteEmployee(${employee.employeeId})">Удалить</button>
-                                                </td>
-                                            `;
-                        employeesList.appendChild(employeeRow);
+
+
+            function updateProjectsList() {
+                const projectsList = document.getElementById("projectsList");
+                projectsList.innerHTML = "";
+
+                fetch("/api/Project")
+                    .then(response => response.json())
+                    .then(projects => {
+                        projects.forEach(project => {
+                            const projectRow = document.createElement("tr");
+                            projectRow.innerHTML = `
+                                                                                <td>${project.projectName}</td>
+                                                                                <td>${project.customerCompany}</td>
+                                                                                <td>${project.executorCompany}</td>
+                                                                                <td>${formatDate(project.startDate)}</td>
+                                                                                <td>${formatDate(project.endDate)}</td>
+                                                                                <td>${project.priority}</td>
+                                                                                <td>
+                                                                                    <button onclick="viewProjectDetails(${project.projectId})">Детали</button>
+                                                                                    <button onclick="editProject(${project.projectId})">Редактировать</button>
+                                                                                    <button onclick="deleteProject(${project.projectId})">Удалить</button>
+                                                                                </td>
+                                                                            `;
+                            projectsList.appendChild(projectRow);
+                        });
                     });
-                });
-        }
+            }
 
-        function viewEmployeeDetails(employeeId) {
-            window.location.href = `/detailsEmployee.html?id=${employeeId}`;
-        }
+            function viewProjectDetails(projectId) {
+                window.location.href = `/detailsProject.html?id=${projectId}`;
+            }
 
-        function editEmployee(employeeId) {
-            window.location.href = `/editEmployee.html?id=${employeeId}`;
-        }
+            function editProject(projectId) {
+                window.location.href = `/editProject.html?id=${projectId}`;
+            }
 
-        function deleteEmployee(employeeId) {
-            // Добавлено подтверждение перед удалением сотрудника
-            const confirmDelete = confirm("Вы уверены, что хотите удалить сотрудника?");
-            if (confirmDelete) {
-                // Проверяем, является ли сотрудник менеджером проекта
-                fetch(`/api/Project/manager/${employeeId}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            // Если сотрудник менеджер проекта, выводим сообщение и прерываем удаление
-                            alert("Нельзя удалить сотрудника, так как он является менеджером проекта.");
-                            throw new Error(`HTTP error! Status: ${response.status}`);
-                        }
-                        return response.text();
+            function deleteProject(projectId) {
+                // Добавлено подтверждение перед удалением проекта
+                const confirmDelete = confirm("Вы уверены, что хотите удалить проект?");
+                if (confirmDelete) {
+                    fetch(`/api/Project/${projectId}`, {
+                        method: 'DELETE'
                     })
-                    .then(() => {
-                        // Если сотрудник не является менеджером проекта, продолжаем удаление
-                        fetch(`/api/Employee/${employeeId}`, {
-                            method: 'DELETE'
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! Status: ${response.status}`);
+                            }
+                            return response.text();
                         })
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error(`HTTP error! Status: ${response.status}`);
-                                }
-                                return response.text();
-                            })
-                            .then(() => {
-                                updateEmployeesList();
-                            })
-                            .catch(error => console.error('Error:', error));
-                    })
-                    .catch(error => console.error('Error:', error));
-            }
-        }
-
-        // Функция сортировки таблицы по столбцу
-        function sortTable(columnIndex) {
-            const table = document.querySelector('table');
-            const tbody = table.querySelector('tbody');
-            const rows = Array.from(tbody.querySelectorAll('tr'));
-
-            // Определение направления сортировки (по возрастанию или убыванию)
-            const asc = table.classList.toggle('asc');
-
-            // Сортировка строк
-            const sortedRows = rows.sort((a, b) => {
-                const aValue = a.children[columnIndex].textContent.trim();
-                const bValue = b.children[columnIndex].textContent.trim();
-
-                return asc ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
-            });
-
-            // Обновление таблицы с отсортированными строками
-            tbody.innerHTML = '';
-            sortedRows.forEach(row => tbody.appendChild(row));
-        }
-
-        // Функция сортировки таблицы сотрудников по столбцу
-        function sortTableEmployees(columnIndex) {
-            const table = document.querySelectorAll('table')[1]; // Используем вторую таблицу (индекс 1) на странице
-            const tbody = table.querySelector('tbody');
-            const rows = Array.from(tbody.querySelectorAll('tr'));
-
-            // Определение направления сортировки (по возрастанию или убыванию)
-            const asc = table.classList.toggle('asc');
-
-            // Сортировка строк
-            const sortedRows = rows.sort((a, b) => {
-                const aValue = a.children[columnIndex].textContent.trim();
-                const bValue = b.children[columnIndex].textContent.trim();
-
-                return asc ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
-            });
-
-            // Обновление таблицы с отсортированными строками
-            tbody.innerHTML = '';
-            sortedRows.forEach(row => tbody.appendChild(row));
-        }
-
-        function applyFilters() {
-            const startDateFromFilter = document.getElementById("startDateFromFilter").value;
-            const startDateToFilter = document.getElementById("startDateToFilter").value;
-            const priorityFilter = document.getElementById("priorityFilter").value;
-
-            const filters = [];
-
-            if (startDateFromFilter || startDateToFilter) {
-                filters.push(project => {
-                    const startDate = new Date(project.startDate);
-                    const startDateFrom = startDateFromFilter ? new Date(startDateFromFilter) : null;
-                    const startDateTo = startDateToFilter ? new Date(startDateToFilter) : null;
-
-                    // Обрезаем время для корректного сравнения
-                    startDate.setHours(0, 0, 0, 0);
-                    if (startDateFrom) startDateFrom.setHours(0, 0, 0, 0);
-                    if (startDateTo) startDateTo.setHours(0, 0, 0, 0);
-
-                    return (
-                        (!startDateFrom || startDate >= startDateFrom) &&
-                        (!startDateTo || startDate <= startDateTo)
-                    );
-                });
+                        .then(() => {
+                            updateProjectsList();
+                        })
+                        .catch(error => console.error('Error:', error));
+                }
             }
 
-            if (priorityFilter) {
-                filters.push(project => project.priority == priorityFilter);
-            }
+            function updateEmployeesList() {
+                const employeesList = document.getElementById("employeesList");
+                employeesList.innerHTML = "";
 
-            updateProjectsList(filters);
-        }
-
-
-        function updateProjectsList(filters = []) {
-            const projectsList = document.getElementById("projectsList");
-            projectsList.innerHTML = "";
-
-            fetch("/api/Project")
-                .then(response => response.json())
-                .then(projects => {
-                    const filteredProjects = projects.filter(project => filters.every(filter => filter(project)));
-
-                    filteredProjects.forEach(project => {
-                        const projectRow = document.createElement("tr");
-                        projectRow.innerHTML = `
-                                <td>${project.projectName}</td>
-                                <td>${project.customerCompany}</td>
-                                <td>${project.executorCompany}</td>
-                                <td>${formatDate(project.startDate)}</td>
-                                <td>${formatDate(project.endDate)}</td>
-                                <td>${project.priority}</td>
-                                <td>
-                                    <button onclick="viewProjectDetails(${project.projectId})">Детали</button>
-                                    <button onclick="editProject(${project.projectId})">Редактировать</button>
-                                    <button onclick="deleteProject(${project.projectId})">Удалить</button>
-                                </td>
-                            `;
-                        projectsList.appendChild(projectRow);
+                fetch("/api/Employee")
+                    .then(response => response.json())
+                    .then(employees => {
+                        employees.forEach(employee => {
+                            const employeeRow = document.createElement("tr");
+                            employeeRow.innerHTML = `
+                                                                    <td>${employee.firstName} ${employee.lastName}</td>
+                                                                    <td>${employee.email}</td>
+                                                                    <td>
+                                                                        <button onclick="viewEmployeeDetails(${employee.employeeId})">Детали</button>
+                                                                        <button onclick="editEmployee(${employee.employeeId})">Редактировать</button>
+                                                                        <button onclick="deleteEmployee(${employee.employeeId})">Удалить</button>
+                                                                    </td>
+                                                                `;
+                            employeesList.appendChild(employeeRow);
+                        });
                     });
-                });
-        }
+            }
 
-        window.onload = function () {
-            updateProjectsList();
-            loadManagers();
-            updateEmployeesList();
-        };
-    </script>
+            function viewEmployeeDetails(employeeId) {
+                window.location.href = `/detailsEmployee.html?id=${employeeId}`;
+            }
+
+            function editEmployee(employeeId) {
+                window.location.href = `/editEmployee.html?id=${employeeId}`;
+            }
+
+            function deleteEmployee(employeeId) {
+                // Добавлено подтверждение перед удалением сотрудника
+                const confirmDelete = confirm("Вы уверены, что хотите удалить сотрудника?");
+                if (confirmDelete) {
+                    // Проверяем, является ли сотрудник менеджером проекта
+                    fetch(`/api/Project/manager/${employeeId}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                // Если сотрудник менеджер проекта, выводим сообщение и прерываем удаление
+                                alert("Нельзя удалить сотрудника, так как он является менеджером проекта.");
+                                throw new Error(`HTTP error! Status: ${response.status}`);
+                            }
+                            return response.text();
+                        })
+                        .then(() => {
+                            // Если сотрудник не является менеджером проекта, продолжаем удаление
+                            fetch(`/api/Employee/${employeeId}`, {
+                                method: 'DELETE'
+                            })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error(`HTTP error! Status: ${response.status}`);
+                                    }
+                                    return response.text();
+                                })
+                                .then(() => {
+                                    updateEmployeesList();
+                                })
+                                .catch(error => console.error('Error:', error));
+                        })
+                        .catch(error => console.error('Error:', error));
+                }
+            }
+
+            // Функция сортировки таблицы по столбцу
+            function sortTable(columnIndex) {
+                const table = document.querySelector('table');
+                const tbody = table.querySelector('tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+
+                // Определение направления сортировки (по возрастанию или убыванию)
+                const asc = table.classList.toggle('asc');
+
+                // Сортировка строк
+                const sortedRows = rows.sort((a, b) => {
+                    const aValue = a.children[columnIndex].textContent.trim();
+                    const bValue = b.children[columnIndex].textContent.trim();
+
+                    return asc ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+                });
+
+                // Обновление таблицы с отсортированными строками
+                tbody.innerHTML = '';
+                sortedRows.forEach(row => tbody.appendChild(row));
+            }
+
+            // Функция сортировки таблицы сотрудников по столбцу
+            function sortTableEmployees(columnIndex) {
+                const table = document.querySelectorAll('table')[1]; // Используем вторую таблицу (индекс 1) на странице
+                const tbody = table.querySelector('tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+
+                // Определение направления сортировки (по возрастанию или убыванию)
+                const asc = table.classList.toggle('asc');
+
+                // Сортировка строк
+                const sortedRows = rows.sort((a, b) => {
+                    const aValue = a.children[columnIndex].textContent.trim();
+                    const bValue = b.children[columnIndex].textContent.trim();
+
+                    return asc ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+                });
+
+                // Обновление таблицы с отсортированными строками
+                tbody.innerHTML = '';
+                sortedRows.forEach(row => tbody.appendChild(row));
+            }
+
+            function applyFilters() {
+                const startDateFromFilter = document.getElementById("startDateFromFilter").value;
+                const startDateToFilter = document.getElementById("startDateToFilter").value;
+                const priorityFilter = document.getElementById("priorityFilter").value;
+
+                const filters = [];
+
+                if (startDateFromFilter || startDateToFilter) {
+                    filters.push(project => {
+                        const startDate = new Date(project.startDate);
+                        const startDateFrom = startDateFromFilter ? new Date(startDateFromFilter) : null;
+                        const startDateTo = startDateToFilter ? new Date(startDateToFilter) : null;
+
+                        // Обрезаем время для корректного сравнения
+                        startDate.setHours(0, 0, 0, 0);
+                        if (startDateFrom) startDateFrom.setHours(0, 0, 0, 0);
+                        if (startDateTo) startDateTo.setHours(0, 0, 0, 0);
+
+                        return (
+                            (!startDateFrom || startDate >= startDateFrom) &&
+                            (!startDateTo || startDate <= startDateTo)
+                        );
+                    });
+                }
+
+                if (priorityFilter) {
+                    filters.push(project => project.priority == priorityFilter);
+                }
+
+                updateProjectsList(filters);
+            }
+
+
+            function updateProjectsList(filters = []) {
+                const projectsList = document.getElementById("projectsList");
+                projectsList.innerHTML = "";
+
+                fetch("/api/Project")
+                    .then(response => response.json())
+                    .then(projects => {
+                        const filteredProjects = projects.filter(project => filters.every(filter => filter(project)));
+
+                        filteredProjects.forEach(project => {
+                            const projectRow = document.createElement("tr");
+                            projectRow.innerHTML = `
+                                                    <td>${project.projectName}</td>
+                                                    <td>${project.customerCompany}</td>
+                                                    <td>${project.executorCompany}</td>
+                                                    <td>${formatDate(project.startDate)}</td>
+                                                    <td>${formatDate(project.endDate)}</td>
+                                                    <td>${project.priority}</td>
+                                                    <td>
+                                                        <button onclick="viewProjectDetails(${project.projectId})">Детали</button>
+                                                        <button onclick="editProject(${project.projectId})">Редактировать</button>
+                                                        <button onclick="deleteProject(${project.projectId})">Удалить</button>
+                                                    </td>
+                                                `;
+                            projectsList.appendChild(projectRow);
+                        });
+                    });
+            }
+
+            window.onload = function () {
+                updateProjectsList();
+                loadManagers();
+                updateEmployeesList();
+            };
+        </script>
 </body>
 </html>
