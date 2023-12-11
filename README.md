@@ -33,5 +33,5 @@ Swashbuckle.AspNetCore 6.5.0<br>
 <br><br>
 
 ![](WebApi/wwwroot/img/indexScreen2.png)
-![](WebApi/wwwroot/img/detailsScreen.png)
+![](WebApi/wwwroot/img/detailsScreen2.png)
 ![](WebApi/wwwroot/img/editScreen.png)
